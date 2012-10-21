@@ -3,16 +3,17 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_omnikassa'
   s.version     = '1.2.0'
-  s.summary     = 'TODO: Add gem summary here'
-  s.description = 'TODO: Add (optional) gem description here'
+  s.summary     = 'Omnikassa payment method'
   s.required_ruby_version = '>= 1.8.7'
 
-  # s.author    = 'You'
-  # s.email     = 'you@example.com'
-  # s.homepage  = 'http://www.spreecommerce.com'
+  s.author    = 'Pythonheads'
+  s.email     = 'info@pythonheads.nl'
+  s.homepage  = 'http://www.pythonheads.nl'
 
-  #s.files       = `git ls-files`.split("\n")
+  s.files       = `git ls-files`.split("\n")
+ 
   #s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
+ 
   s.require_path = 'lib'
   s.requirements << 'none'
 
