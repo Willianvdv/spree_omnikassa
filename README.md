@@ -1,13 +1,12 @@
 SpreeOmnikassa
 ==============
 
-Introduction goes here.
+Plugin that adds omnikassa as payment method
 
 
-Example
+Install
 =======
 
-Example goes here.
 
 Testing
 -------
