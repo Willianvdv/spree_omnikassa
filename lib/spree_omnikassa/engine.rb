@@ -12,7 +12,7 @@ module SpreeOmnikassa
     end
 
     initializer "spree.gateway.payment_methods", :after => "spree.register.payment_methods" do |app|
-      app.config.spree.payment_methods << Spree::Gateway::Omnikassa
+      app.config.spree.payment_methods << Spree::BillingIntegration::Omnikassa
     end
 
     def self.activate
