@@ -4,7 +4,9 @@ module Spree
     preference :secret_key, :string
     preference :key_version, :string
 
-    attr_accessible :preferred_merchant_id, 
+    attr_accessible :preferred_server,
+                    :preferred_test_mode,
+                    :preferred_merchant_id, 
                     :preferred_secret_key, 
                     :preferred_key_version
   end
