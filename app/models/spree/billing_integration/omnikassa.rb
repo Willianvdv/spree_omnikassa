@@ -4,8 +4,9 @@ module Spree
     preference :secret_key, :string
     preference :key_version, :string
 
+    # Show the confirm step (slightly hackish)
     def payment_profiles_supported?
-        true
+      true
     end
 
     attr_accessible :preferred_server,
@@ -19,12 +20,5 @@ module Spree
       ActiveMerchant::Billing::Omnikassa 
     end
 
-    #def redirect_url order, opts = {}
-    #  'http://www.google.nl'
-    #end
-
-    #def payment_source_class
-    #  nil #Spree::Omnikassa
-    #end
   end
 end
