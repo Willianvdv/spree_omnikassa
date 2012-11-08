@@ -17,6 +17,12 @@ module Spree
     
     subject { Spree::OmnikassaPayment.new(order) }
 
+    context 'seal' do
+      it 'has is right' do
+        subject.seal.should eq 'NAVYSEAL'
+      end
+    end
+    
     context 'payment data' do
       it 'has the amount in cents' do
         subject.payment_data[:amount].should equal 1000

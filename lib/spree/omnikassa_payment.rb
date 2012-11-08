@@ -25,7 +25,15 @@ module Spree
     def keyVersion
       Spree::Config[:omnikassa_key_version]
     end
-    
+   
+    def seal
+       # self.data + secret daarover een sausje van sha256
+    end
+
+    def data
+      # Omnikassa data format
+    end
+
     def payment_data
       {:amount => amount,
        :currencyCode => currencyCode,
