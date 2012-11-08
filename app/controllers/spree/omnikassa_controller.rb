@@ -11,7 +11,7 @@ module Spree
         
       end
 
-      def data
+      def data order
         
       end
     
