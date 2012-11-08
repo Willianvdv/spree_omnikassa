@@ -2,7 +2,7 @@ module Spree
   class OmnikassaController < Spree::BaseController
     ssl_required
 
-    def index
+    def start
       @order = current_order
     end
 
