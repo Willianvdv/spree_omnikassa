@@ -17,10 +17,24 @@ module Spree
     def currencyCode
       money.currency.iso_numeric
     end
+
+    def merchantId
+      Spree::Config[:omnikassa_merchant_id]
+    end
+
+    def keyVersion
+      Spree::Config[:omnikassa_key_version]
+    end
     
     def payment_data
       {:amount => amount,
-       :currencyCode => currencyCode}
+       :currencyCode => currencyCode,
+       :merchantId => merchantId,
+       :normalReturnUrl => '',
+       :automaticReturnUrl => '',
+       :transactionReference => '',
+       :keyVersion => keyVersion,
+      }
     end 
   end
 end
