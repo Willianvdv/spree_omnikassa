@@ -1,3 +1,10 @@
 <h1>Omnikassa</h1>
 
-<p>DAAR GA JE FABER</p>
+<h2>DAAR GA JE FABER</h2>
+
+<form action="https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet " method="post">
+  <input type="text" name="Seal" value="<%= @seal %>"/><br/>
+  <input type="text" name="Data" value="<%= @data %>"/><br/>
+  <input type="text" name="InterfaceVersion" value="HP_1.0"/><br/>
+  <input type="submit">
+</form>

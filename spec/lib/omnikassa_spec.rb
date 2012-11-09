@@ -21,12 +21,18 @@ module Spree
     subject { Spree::Omnikassa.new order, 'http://e.x' }
 
     it 'has a seal' do
-      seal = '0ccdf31540144864eb2519562a1680d6afa16cda9e97fd40aba2d8c486d78b78'
+      seal = 'f567f491346710399e8cd608087daafb452e7a95757a685f8081424f739adffb'
       subject.seal.should eq seal
     end
 
     it 'has the data string' do
-      d = "amount=1000|currencyCode=978|merchantId=1337|normalReturnUrl=http://e.x/omnikassa/success/|automaticReturnUrl=http://e.x/omnikassa/success/automatic/|transactionReference=PREFIX_#{order.id}|keyVersion=7"
+      d = "amount=1000|" \
+          "currencyCode=978|" \
+          "merchantId=1337|" \
+          "normalReturnUrl=http://e.x/omnikassa/success/#{order.id}/|" \
+          "automaticResponseUrl=http://e.x/omnikassa/success/automatic/#{order.id}/|"\
+          "transactionReference=PREFIX#{order.id}|" \
+          "keyVersion=7"
       subject.data.should eq d
     end
     
@@ -48,15 +54,15 @@ module Spree
       end
 
       it 'has the normal return url' do
-        subject.payment_data[:normalReturnUrl].should eq 'http://e.x/omnikassa/success/'
+        subject.payment_data[:normalReturnUrl].should eq "http://e.x/omnikassa/success/#{order.id}/"
       end
  
       it 'has the automatic return url' do
-        subject.payment_data[:normalReturnUrl].should eq 'http://e.x/omnikassa/success/'
+        subject.payment_data[:automaticResponseUrl].should eq "http://e.x/omnikassa/success/automatic/#{order.id}/"
       end
 
       it 'has the transaction reference' do
-        subject.payment_data[:transactionReference].should eq "PREFIX_#{order.id}"
+        subject.payment_data[:transactionReference].should eq "PREFIX#{order.id}"
       end
     end
   end

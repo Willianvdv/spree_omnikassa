@@ -4,8 +4,9 @@ require 'digest'
 module Spree
   class Omnikassa
 
-    def initialize(order, domain)
-      @order = order
+    def initialize(payment, domain)
+      @payment = payment
+      @order = @payment.order
       @domain = domain
     end
 
@@ -43,20 +44,28 @@ module Spree
 
     def normal_return_url
       # Todo: Remove hardcode url
-      "#{@domain}/omnikassa/success/"
+      "#{@domain}/omnikassa/success/#{@payment.id}/#{payment_token}/"
     end
 
-    def automatic_return_url
+    def automatic_response_url
       # Todo: Remove hardcode url
-      "#{@domain}/omnikassa/success/automatic/"
+      "#{@domain}/omnikassa/success/automatic/#{@payment.id}/#{payment_token}/"
     end
 
     def transaction_reference_prefix
        Spree::Config[:omnikassa_transaction_reference_prefix]     
     end
 
+    def payment_id
+      @payment.id
+    end
+
+    def payment_token
+      self.class.token payment_id
+    end
+
     def transaction_reference
-      "#{transaction_reference_prefix}_#{@order.id}"  
+      "#{transaction_reference_prefix}#{@order.id}#{payment_id}"  
     end
 
     def payment_data
@@ -64,9 +73,16 @@ module Spree
        :currencyCode => currency_code,
        :merchantId => merchant_id,
        :normalReturnUrl => normal_return_url,
-       :automaticReturnUrl => automatic_return_url,
+       :automaticResponseUrl => automatic_response_url,
        :transactionReference => transaction_reference,
        :keyVersion => key_version,}
+    end 
+
+    def self.token s
+      # create a token based on rails secret_token
+      # TODO: replace with a more secure implementation
+      a = "#{s}#{Rails.application.config.secret_token[0,10]}"
+      (Digest::SHA256.new << a).to_s()[0,10]    
     end 
   end
 end
