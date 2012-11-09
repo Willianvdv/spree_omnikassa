@@ -2,7 +2,7 @@ require 'money'
 require 'digest'
 
 module Spree
-  class OmnikassaPayment
+  class Omnikassa
 
     def initialize(order, domain)
       @order = order
