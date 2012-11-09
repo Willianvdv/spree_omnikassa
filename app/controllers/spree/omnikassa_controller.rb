@@ -3,25 +3,19 @@ module Spree
     ssl_required
 
     def start
+      # Start an omnikassa transaction
       @order = current_order
     end
 
-    def signature
-        
+    def success
     end
 
-    def data
-          
+    def success_automatic
+      # An automatic omnikassa response
     end
-    
-    def payment_data
-      {:amount => '',
-       :currencyCode => '',
-       :merchantId => '',
-       :normalReturnUrl => '',
-       :automaticReturnUrl => '',
-       :transactionReference => '',
-       :keyVersion => ''}
+
+    def error
     end
+
   end
 end
