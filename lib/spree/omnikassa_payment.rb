@@ -29,8 +29,12 @@ module Spree
       Spree::Config[:omnikassa_key_version]
     end
    
+    def secret
+      Spree::Config[:omnikassa_secret_key]
+    end
+
     def seal
-       Digest::SHA2.new << data
+       (Digest::SHA256.new << "#{data}#{secret}").to_s
     end
 
     def data

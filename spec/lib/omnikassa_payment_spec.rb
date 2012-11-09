@@ -14,12 +14,13 @@ module Spree
       Spree::Config[:omnikassa_merchant_id] = '1337'
       Spree::Config[:omnikassa_transaction_reference_prefix] = 'PREFIX'
       Spree::Config[:omnikassa_key_version] = '7'
+      Spree::Config[:omnikassa_secret_key] = 'SECRET'
     end
     
     subject { Spree::OmnikassaPayment.new order, 'http://e.x' }
 
     it 'has a seal' do
-      seal = '4418797614984d9c3e2f3ef43a35c46e6aac282d5a4f037cdd39d2886bcbb666'
+      seal = '0ccdf31540144864eb2519562a1680d6afa16cda9e97fd40aba2d8c486d78b78'
       subject.seal.should eq seal
     end
 
