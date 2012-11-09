@@ -12,15 +12,20 @@ module Spree
       config.reset
       config.currency = "EUR"
       Spree::Config[:omnikassa_merchant_id] = '1337'
+      Spree::Config[:omnikassa_transaction_reference_prefix] = 'PREFIX'
       Spree::Config[:omnikassa_key_version] = '7'
     end
     
-    subject { Spree::OmnikassaPayment.new(order) }
+    subject { Spree::OmnikassaPayment.new(order, 'http://e.x') }
 
-    context 'seal' do
-      it 'has is right' do
-        subject.seal.should eq 'NAVYSEAL'
-      end
+    it 'has a seal' do
+      seal = '4418797614984d9c3e2f3ef43a35c46e6aac282d5a4f037cdd39d2886bcbb666'
+      subject.seal.should eq seal
+    end
+
+    it 'has the data string' do
+      d = "amount=1000|currencyCode=978|merchantId=1337|normalReturnUrl=http://e.x/omnikassa/success/|automaticReturnUrl=http://e.x/omnikassa/success/automatic/|transactionReference=PREFIX_#{order.id}|keyVersion=7"
+      subject.data.should eq d
     end
     
     context 'payment data' do
@@ -38,6 +43,18 @@ module Spree
 
       it 'has the configured merchant id' do
         subject.payment_data[:merchantId].should eq '1337'
+      end
+
+      it 'has the normal return url' do
+        subject.payment_data[:normalReturnUrl].should eq 'http://e.x/omnikassa/success/'
+      end
+ 
+      it 'has the automatic return url' do
+        subject.payment_data[:normalReturnUrl].should eq 'http://e.x/omnikassa/success/'
+      end
+
+      it 'has the transaction reference' do
+        subject.payment_data[:transactionReference].should eq "PREFIX_#{order.id}"
       end
     end
   end

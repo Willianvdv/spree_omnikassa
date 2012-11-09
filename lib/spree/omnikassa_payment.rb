@@ -1,9 +1,12 @@
 require 'money'
+require 'digest'
 
 module Spree
   class OmnikassaPayment
-    def initialize(order)
+
+    def initialize(order, domain)
       @order = order
+      @domain = domain
     end
 
     def money
@@ -14,35 +17,52 @@ module Spree
       money.cents() 
     end
 
-    def currencyCode
+    def currency_code
       money.currency.iso_numeric
     end
 
-    def merchantId
+    def merchant_id
       Spree::Config[:omnikassa_merchant_id]
     end
 
-    def keyVersion
+    def key_version
       Spree::Config[:omnikassa_key_version]
     end
    
     def seal
-       # self.data + secret daarover een sausje van sha256
+       Digest::SHA2.new << data
     end
 
     def data
-      # Omnikassa data format
+      payment_data.map{|k,v| "#{k}=#{v}"}.join('|')
+    end
+
+    def normal_return_url
+      # Todo: Remove hardcode url
+      "#{@domain}/omnikassa/success/"
+    end
+
+    def automatic_return_url
+      # Todo: Remove hardcode url
+      "#{@domain}/omnikassa/success/automatic/"
+    end
+
+    def transaction_reference_prefix
+       Spree::Config[:omnikassa_transaction_reference_prefix]     
+    end
+
+    def transaction_reference
+      "#{transaction_reference_prefix}_#{@order.id}"  
     end
 
     def payment_data
       {:amount => amount,
-       :currencyCode => currencyCode,
-       :merchantId => merchantId,
-       :normalReturnUrl => '',
-       :automaticReturnUrl => '',
-       :transactionReference => '',
-       :keyVersion => keyVersion,
-      }
+       :currencyCode => currency_code,
+       :merchantId => merchant_id,
+       :normalReturnUrl => normal_return_url,
+       :automaticReturnUrl => automatic_return_url,
+       :transactionReference => transaction_reference,
+       :keyVersion => key_version,}
     end 
   end
 end
