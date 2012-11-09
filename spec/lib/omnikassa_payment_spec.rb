@@ -16,7 +16,7 @@ module Spree
       Spree::Config[:omnikassa_key_version] = '7'
     end
     
-    subject { Spree::OmnikassaPayment.new(order, 'http://e.x') }
+    subject { Spree::OmnikassaPayment.new order, 'http://e.x' }
 
     it 'has a seal' do
       seal = '4418797614984d9c3e2f3ef43a35c46e6aac282d5a4f037cdd39d2886bcbb666'
