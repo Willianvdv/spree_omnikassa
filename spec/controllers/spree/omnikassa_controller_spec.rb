@@ -55,7 +55,10 @@ describe Spree::OmnikassaController do
 
     context 'seal' do
       it 'will respond a 403 if an invalid seal is given' do
-        spree_post :success, {:payment_id => payment.id, :token => o.token(payment.id)}
+        spree_post :success, {:payment_id => payment.id, 
+                              :token => o.token(payment.id),
+                              :Data => response_data,
+                              :Seal => "INVALID_SEAL"}
         response.status.should be 403
       end
 
@@ -67,6 +70,15 @@ describe Spree::OmnikassaController do
                               :Seal => seal}
         response.status.should_not be 403
       end
+    end
+    
+    it 'redirects user' do
+      seal = o.new(payment, '').seal response_data
+      spree_post :success, {:payment_id => payment.id, 
+                              :token => o.token(payment.id),
+                              :Data => response_data,
+                              :Seal => seal}
+      response.status.should be 302
     end
   end
 
