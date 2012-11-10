@@ -11,7 +11,8 @@ module Spree
     end
 
     def money
-      ::Money.parse([@order.amount, Spree::Config[:currency]].join)
+      # TODO: Check if this is the right way to get the currency
+      ::Money.parse([@payment.amount, Spree::Config[:currency]].join)
     end
 
     def amount
@@ -79,7 +80,6 @@ module Spree
     end 
 
     def self.token s
-      # create a token based on rails secret_token
       # TODO: replace with a more secure implementation
       a = "#{s}#{Rails.application.config.secret_token[0,10]}"
       (Digest::SHA256.new << a).to_s()[0,10]    

@@ -7,4 +7,13 @@ describe Spree::OmnikassaController do
 
   before { controller.stub :current_order => order}
 
+  context 'valid token' do
+
+    it 'will respond a 404 if a invalid token is given' do
+      spree_get :start
+      puts response
+    end
+  
+  end
+
 end
