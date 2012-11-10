@@ -76,6 +76,14 @@ module Spree
        :automaticResponseUrl => automatic_response_url,
        :transactionReference => transaction_reference,
        :keyVersion => key_version,}
+    end
+
+    def parse_data_string data_string
+       Rack::Utils.parse_nested_query(data_string.gsub('|','&')).deep_symbolize_keys
+    end
+
+    def response data_string
+      data = parse_data_string
     end 
 
     def self.token s
