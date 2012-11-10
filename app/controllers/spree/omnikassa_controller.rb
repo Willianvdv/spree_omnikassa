@@ -45,6 +45,11 @@ module Spree
         :omnikassa_response_code => data[:responseCode],
       })
 
+      # Set payment state to completed if response code is 00
+      if data[:responseCode] == '00'
+        payment.send("complete!")
+      end
+
       redirect_to order_url(order) 
     end
 

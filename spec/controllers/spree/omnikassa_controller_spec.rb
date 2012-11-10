@@ -52,7 +52,7 @@ describe Spree::OmnikassaController do
       "authorisationId=0020000006791167|" \
       "paymentMeanBrand=IDEAL|" \
       "paymentMeanType=CREDIT_TRANSFER|" \
-      "responseCode=00"
+      "responseCode=#{d[:responseCode] or '00'}"
     end
 
     context 'seal' do
@@ -127,6 +127,28 @@ describe Spree::OmnikassaController do
         omnikassa_payment.omnikassa_response_code.should eq data[:responseCode]
       end
 
+      it 'keep the state to pending when another responseCode than 00 is given' do
+        data = response_data({:responseCode => '99'})
+        seal = o.new(payment, '').seal data
+        spree_post :success, {:payment_id => payment.id, 
+                              :token => o.token(payment.id),
+                              :Data => data,
+                              :Seal => seal}
+        payment.reload
+        payment.state.should eq 'pending'
+      end
+
+      it 'sets the state to complete if 00 responseCode is given' do
+        data = response_data({:responseCode => '00'})
+        seal = o.new(payment, '').seal data
+        spree_post :success, {:payment_id => payment.id, 
+                              :token => o.token(payment.id),
+                              :Data => data,
+                              :Seal => seal}
+        payment.reload
+        payment.state.should eq 'completed'
+      end
+      
       it 'redirects user' do
         seal = o.new(payment, '').seal response_data
         spree_post :success, {:payment_id => payment.id, 
