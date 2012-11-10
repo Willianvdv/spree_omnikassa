@@ -73,64 +73,68 @@ describe Spree::OmnikassaController do
         response.status.should_not be 403
       end
     end
-   
-    it 'gives a 403 if the amount is changed' do
-      seal = o.new(payment, '').seal response_data
-      spree_post :success, {:payment_id => payment.id, 
-                            :token => o.token(payment.id),
-                            :Data => response_data({:amount => '100'}),
-                            :Seal => seal}
-      response.status.should be 403    
-    end
 
-    it 'gives a 403 if the currency code is changed' do
-      seal = o.new(payment, '').seal response_data
-      spree_post :success, {:payment_id => payment.id, 
-                            :token => o.token(payment.id),
-                            :Data => response_data({:currencyCode => '666'}),
-                            :Seal => seal}
-      response.status.should be 403    
-    end
+    describe 'validates' do
+      it 'gives a 403 if the amount is changed' do
+        seal = o.new(payment, '').seal response_data
+        spree_post :success, {:payment_id => payment.id, 
+                             :token => o.token(payment.id),
+                             :Data => response_data({:amount => '100'}),
+                             :Seal => seal}
+        response.status.should be 403    
+      end
 
-    it 'gives a 403 if the merchant id is changed' do
-      seal = o.new(payment, '').seal response_data
-      spree_post :success, {:payment_id => payment.id, 
-                            :token => o.token(payment.id),
-                            :Data => response_data({:merchantId => '9999'}),
-                            :Seal => seal}
-      response.status.should be 403    
-    end
+      it 'gives a 403 if the currency code is changed' do
+        seal = o.new(payment, '').seal response_data
+        spree_post :success, {:payment_id => payment.id, 
+                              :token => o.token(payment.id),
+                             :Data => response_data({:currencyCode => '666'}),
+                             :Seal => seal}
+        response.status.should be 403    
+      end
 
-    it 'creates a omnikassa payment object' do
-      seal = o.new(payment, '').seal response_data
-      spree_post :success, {:payment_id => payment.id, 
-                            :token => o.token(payment.id),
-                            :Data => response_data,
-                            :Seal => seal}
-      data = o.new(payment, '').parse_data_string response_data
-      omnikassa_payment = Spree::OmnikassaPayment.first
-      omnikassa_payment.omnikassa_amount.should eq data[:amount].to_i
-      omnikassa_payment.omnikassa_capture_day.should eq data[:captureDay]
-      omnikassa_payment.omnikassa_capture_mode.should eq data[:captureMode] 
-      omnikassa_payment.omnikassa_currency_code.should eq data[:currencyCode]
-      omnikassa_payment.omnikassa_merchant_id.should eq data[:merchantId]
-      omnikassa_payment.omnikassa_order_id.should eq data[:orderId]
-      omnikassa_payment.omnikassa_transaction_date_time.should eq data[:transactionDateTime]
-      omnikassa_payment.omnikassa_transaction_reference.should eq data[:transactionReference]
-      omnikassa_payment.omnikassa_authorisation_id.should eq data[:authorisationId]
-      omnikassa_payment.omnikassa_key_version.should eq data[:keyVersion]
-      omnikassa_payment.omnikassa_payment_mean_brand.should eq data[:paymentMeanBrand]
-      omnikassa_payment.omnikassa_payment_mean_type.should eq data[:paymentMeanType]
-      omnikassa_payment.omnikassa_response_code.should eq data[:responseCode]
+      it 'gives a 403 if the merchant id is changed' do
+        seal = o.new(payment, '').seal response_data
+        spree_post :success, {:payment_id => payment.id, 
+                              :token => o.token(payment.id),
+                              :Data => response_data({:merchantId => '9999'}),
+                              :Seal => seal}
+        response.status.should be 403    
+      end
     end
+    
+    describe 'payment flow' do
+      it 'creates a omnikassa payment object' do
+        seal = o.new(payment, '').seal response_data
+        spree_post :success, {:payment_id => payment.id, 
+                              :token => o.token(payment.id),
+                              :Data => response_data,
+                              :Seal => seal}
+        data = o.new(payment, '').parse_data_string response_data
+        omnikassa_payment = Spree::OmnikassaPayment.first
+        omnikassa_payment.omnikassa_amount.should eq data[:amount].to_i
+        omnikassa_payment.omnikassa_capture_day.should eq data[:captureDay]
+        omnikassa_payment.omnikassa_capture_mode.should eq data[:captureMode] 
+        omnikassa_payment.omnikassa_currency_code.should eq data[:currencyCode]
+        omnikassa_payment.omnikassa_merchant_id.should eq data[:merchantId]
+        omnikassa_payment.omnikassa_order_id.should eq data[:orderId]
+        omnikassa_payment.omnikassa_transaction_date_time.should eq data[:transactionDateTime]
+        omnikassa_payment.omnikassa_transaction_reference.should eq data[:transactionReference]
+        omnikassa_payment.omnikassa_authorisation_id.should eq data[:authorisationId]
+        omnikassa_payment.omnikassa_key_version.should eq data[:keyVersion]
+        omnikassa_payment.omnikassa_payment_mean_brand.should eq data[:paymentMeanBrand]
+        omnikassa_payment.omnikassa_payment_mean_type.should eq data[:paymentMeanType]
+        omnikassa_payment.omnikassa_response_code.should eq data[:responseCode]
+      end
 
-    it 'redirects user' do
-      seal = o.new(payment, '').seal response_data
-      spree_post :success, {:payment_id => payment.id, 
-                            :token => o.token(payment.id),
-                            :Data => response_data,
-                            :Seal => seal}
-      response.status.should be 302
+      it 'redirects user' do
+        seal = o.new(payment, '').seal response_data
+        spree_post :success, {:payment_id => payment.id, 
+                              :token => o.token(payment.id),
+                              :Data => response_data,
+                              :Seal => seal}
+        response.status.should be 302
+      end
     end
   end
 
