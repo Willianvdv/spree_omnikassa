@@ -12,6 +12,26 @@ module Spree
     end
 
     def success
+      data = omnikassa.parse_data_string params[:Data] 
+
+      # Validate
+      # Check amount
+      unless data[:amount] == omnikassa.amount.to_s
+        head :forbidden
+      end
+      # Check currencyCode
+      unless data[:currencyCode] == omnikassa.currency_code
+        head :forbidden
+      end
+      # Check merchantId
+      unless data[:merchantId] == omnikassa.merchant_id
+        head :forbidden
+      end
+      # Check transactionReference
+      unless data[:transactionReference] == omnikassa.transaction_reference
+        head :forbidden
+      end
+
       redirect_to order_url(order) 
     end
 

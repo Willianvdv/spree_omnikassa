@@ -3,6 +3,8 @@ require 'spree/core/testing_support/preferences'
 
 module Spree
   describe Omnikassa do
+    include_context 'omnikassa'
+
     let(:payment) do 
       FactoryGirl.create :payment
     end
@@ -16,8 +18,8 @@ module Spree
     describe 'request' do
 
       it 'has a seal' do
-        seal = 'b39ac30cde94634ebfba291e89c901482badda3cddcb126c87c704a87c80e11f'
-        subject.seal(subject.data).should eq seal
+        s = '4c40701467265276170676524ba5f8a81dcf622bc932b35268e189ff97d6b062'
+        subject.seal(subject.data).should eq s
       end
 
       it 'has the data string' do

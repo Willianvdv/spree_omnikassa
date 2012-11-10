@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::OmnikassaController do
+  include_context 'omnikassa'
+
   let(:payment) do
     FactoryGirl.create :payment
   end
@@ -37,12 +39,12 @@ describe Spree::OmnikassaController do
   end
 
   context 'success' do
-    let(:response_data) do
-      "amount=4575|" \
+    def response_data d={}
+      "amount=#{d[:amount] or '4575'}|" \
       "captureDay=0|" \
       "captureMode=AUTHOR_CAPTURE|" \
-      "currencyCode=978|" \
-      "merchantId=#{Spree::Config.omnikassa_merchant_id}|" \
+      "currencyCode=#{d[:currencyCode] or '978'}|" \
+      "merchantId=#{d[:merchantId] or Spree::Config.omnikassa_merchant_id}|" \
       "orderId=null|" \
       "transactionDateTime=2012-11-10T14:04:33+01:00|" \
       "transactionReference=PREFIX#{order.id}#{payment.id}|" \
@@ -71,7 +73,34 @@ describe Spree::OmnikassaController do
         response.status.should_not be 403
       end
     end
-    
+   
+    it 'gives a 403 if the amount is changed' do
+      seal = o.new(payment, '').seal response_data
+      spree_post :success, {:payment_id => payment.id, 
+                            :token => o.token(payment.id),
+                            :Data => response_data({:amount => '100'}),
+                            :Seal => seal}
+      response.status.should be 403    
+    end
+
+    it 'gives a 403 if the currency code is changed' do
+      seal = o.new(payment, '').seal response_data
+      spree_post :success, {:payment_id => payment.id, 
+                            :token => o.token(payment.id),
+                            :Data => response_data({:currencyCode => '666'}),
+                            :Seal => seal}
+      response.status.should be 403    
+    end
+
+    it 'gives a 403 if the merchant id is changed' do
+      seal = o.new(payment, '').seal response_data
+      spree_post :success, {:payment_id => payment.id, 
+                            :token => o.token(payment.id),
+                            :Data => response_data({:merchantId => '9999'}),
+                            :Seal => seal}
+      response.status.should be 403    
+    end
+
     it 'redirects user' do
       seal = o.new(payment, '').seal response_data
       spree_post :success, {:payment_id => payment.id, 

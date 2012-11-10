@@ -55,7 +55,7 @@ RSpec.configure do |config|
 
 end
 
-shared_context do
+shared_context 'omnikassa' do
   before do
     reset_spree_preferences do |config|
       config.currency = "EUR"
