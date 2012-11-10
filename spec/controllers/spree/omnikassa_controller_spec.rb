@@ -26,4 +26,13 @@ describe Spree::OmnikassaController do
       response.status.should equal 200
     end
   end
+
+  context 'start' do
+    it 'has the seal and data set' do
+      spree_get :start, {:payment_id => payment.id, :token => o.token(payment.id)}
+      assigns[:seal].should_not be nil
+      assigns[:data].should_not be nil
+      response.status.should equal 200
+    end
+  end
 end
