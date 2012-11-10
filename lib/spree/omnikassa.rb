@@ -3,7 +3,6 @@ require 'digest'
 
 module Spree
   class Omnikassa
-
     def initialize(payment, domain)
       @payment = payment
       @order = @payment.order
@@ -44,12 +43,12 @@ module Spree
     end
 
     def normal_return_url
-      # Todo: Remove hardcode url
+      # TODO: Remove hardcode url
       "#{@domain}/omnikassa/success/#{@payment.id}/#{payment_token}/"
     end
 
     def automatic_response_url
-      # Todo: Remove hardcode url
+      # TODO: Remove hardcode url
       "#{@domain}/omnikassa/success/automatic/#{@payment.id}/#{payment_token}/"
     end
 

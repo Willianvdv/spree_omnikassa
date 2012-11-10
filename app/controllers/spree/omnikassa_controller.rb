@@ -34,12 +34,12 @@ module Spree
       end
 
       def has_valid_token?
-        return false
+        params[:token] == omnikassa.payment_token
       end
 
       def omnikassa  
         domain = "#{request.protocol}#{request.host_with_port}" 
-         Spree::Omnikassa.new payment, domain
+        Spree::Omnikassa.new payment, domain
       end
 
       def payment

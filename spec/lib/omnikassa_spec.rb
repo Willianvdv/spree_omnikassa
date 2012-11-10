@@ -12,14 +12,13 @@ module Spree
     end   
     
     before do
-      # Use sprees default reset preference method
-      config = Rails.application.config.spree.preferences
-      config.reset
-      config.currency = "EUR"
-      Spree::Config[:omnikassa_merchant_id] = '1337'
-      Spree::Config[:omnikassa_transaction_reference_prefix] = 'PREFIX'
-      Spree::Config[:omnikassa_key_version] = '7'
-      Spree::Config[:omnikassa_secret_key] = 'SECRET'
+      reset_spree_preferences do |config|
+        config.currency = "EUR"
+        config.omnikassa_merchant_id = '1337'
+        config.omnikassa_transaction_reference_prefix = 'PREFIX'
+        config.omnikassa_key_version = '7'
+        config.omnikassa_secret_key = 'SECRET'     
+      end
     end
     
     subject { Spree::Omnikassa.new payment, 'http://e.x' }
