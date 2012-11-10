@@ -59,12 +59,12 @@ describe Spree::OmnikassaController do
         response.status.should be 403
       end
 
-      it 'will not respond 403 if an valid seal is given' do
-        s = '95dd82dc2abfb432313aa37908627cd8934d1344cf1842bf66ecc0584dc6e2e4'
+      it 'will not respond with a 403 if a valid seal is given' do
+        seal = o.new(payment, '').seal response_data
         spree_post :success, {:payment_id => payment.id, 
                               :token => o.token(payment.id),
                               :Data => response_data,
-                              :Seal => s}
+                              :Seal => seal}
         response.status.should_not be 403
       end
     end
