@@ -27,10 +27,23 @@ module Spree
       unless data[:merchantId] == omnikassa.merchant_id
         head :forbidden
       end
-      # Check transactionReference
-      unless data[:transactionReference] == omnikassa.transaction_reference
-        head :forbidden
-      end
+
+      # Create omnikassa payment object
+      Spree::OmnikassaPayment.create({
+        :omnikassa_amount => data[:amount],
+        :omnikassa_capture_day => data[:captureDay],
+        :omnikassa_capture_mode => data[:captureMode], 
+        :omnikassa_currency_code => data[:currencyCode],
+        :omnikassa_merchant_id => data[:merchantId],
+        :omnikassa_order_id  => data[:orderId],
+        :omnikassa_transaction_date_time => data[:transactionDateTime],
+        :omnikassa_transaction_reference => data[:transactionReference],
+        :omnikassa_authorisation_id => data[:authorisationId],
+        :omnikassa_key_version => data[:keyVersion],
+        :omnikassa_payment_mean_brand => data[:paymentMeanBrand],
+        :omnikassa_payment_mean_type => data[:paymentMeanType],
+        :omnikassa_response_code => data[:responseCode],
+      })
 
       redirect_to order_url(order) 
     end
