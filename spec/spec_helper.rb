@@ -54,3 +54,16 @@ RSpec.configure do |config|
   config.include Spree::Core::TestingSupport::Flash
 
 end
+
+shared_context do
+  before do
+    reset_spree_preferences do |config|
+      config.currency = "EUR"
+      config.omnikassa_merchant_id = '1337'
+      config.omnikassa_transaction_reference_prefix = 'PREFIX'
+      config.omnikassa_key_version = '7'
+      config.omnikassa_secret_key = 'SECRET'     
+    end
+  end
+end
+    

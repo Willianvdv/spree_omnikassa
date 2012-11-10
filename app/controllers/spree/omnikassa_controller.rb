@@ -3,17 +3,15 @@ module Spree
     ssl_required
     skip_before_filter :verify_authenticity_token
     before_filter :valid_token
+    before_filter :valid_seal, :except => :start
 
     def start
       # Start an omnikassa transaction
-      @seal = omnikassa.seal
       @data = omnikassa.data
+      @seal = omnikassa.seal @data
     end
 
     def success
-      # Success response
-      # TODO: verify payment
-      puts ">>>>>>>>>>>>>> #{order.id}"
       redirect_to order_url(order) 
     end
 
@@ -26,6 +24,17 @@ module Spree
     end
     
     private
+      def valid_seal
+        unless has_valid_seal?
+          flash[:error] = "Invalid seal"
+          head :forbidden
+        end
+      end
+
+      def has_valid_seal?
+        omnikassa.seal(params[:Data]) == params[:Seal]
+      end
+
       def valid_token
         unless has_valid_token?
           flash[:error] = "Invalid token"
@@ -51,3 +60,10 @@ module Spree
       end
   end
 end
+
+#{"Data"=>"amount=17009|captureDay=0|captureMode=AUTHOR_CAPTURE|currencyCode=978|merchantId=002020000000001|orderId=null|transactionDateTime=2012-11-10T14:04:33+01:00|transactionReference=PREFIX1069267069194|keyVersion=1|authorisationId=0020000006791167|paymentMeanBrand=IDEAL|paymentMeanType=CREDIT_TRANSFER|responseCode=00",
+#   "InterfaceVersion"=>"HP_1.0",
+#    "Encode"=>"",
+#     "Seal"=>"d6c09e482d2a62a3daef755d26ce0058b1b826cb8ee42b0e133a965d6fafb8c1",
+#      "payment_id"=>"194",
+#       "token"=>"45475a9001"}

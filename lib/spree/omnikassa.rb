@@ -34,8 +34,8 @@ module Spree
       Spree::Config[:omnikassa_secret_key]
     end
 
-    def seal
-       (Digest::SHA256.new << "#{data}#{secret}").to_s
+    def seal d
+       (Digest::SHA256.new << "#{d}#{secret}").to_s
     end
 
     def data

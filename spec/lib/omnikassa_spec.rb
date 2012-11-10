@@ -11,21 +11,11 @@ module Spree
       payment.order
     end   
     
-    before do
-      reset_spree_preferences do |config|
-        config.currency = "EUR"
-        config.omnikassa_merchant_id = '1337'
-        config.omnikassa_transaction_reference_prefix = 'PREFIX'
-        config.omnikassa_key_version = '7'
-        config.omnikassa_secret_key = 'SECRET'     
-      end
-    end
-    
     subject { Spree::Omnikassa.new payment, 'http://e.x' }
 
     it 'has a seal' do
       seal = 'b39ac30cde94634ebfba291e89c901482badda3cddcb126c87c704a87c80e11f'
-      subject.seal.should eq seal
+      subject.seal(subject.data).should eq seal
     end
 
     it 'has the data string' do
