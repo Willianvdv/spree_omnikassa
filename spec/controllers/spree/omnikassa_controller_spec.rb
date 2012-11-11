@@ -167,6 +167,11 @@ describe Spree::OmnikassaController do
   end
 
   context 'error' do
+    it 'response with a 200' do
+      spree_post :error, {:payment_id => payment.id, 
+                          :token => o.token(payment.id)}
+      response.status.should be 200
+    end
   end
 
 end

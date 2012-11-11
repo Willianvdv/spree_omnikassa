@@ -3,7 +3,7 @@ module Spree
     ssl_required
     skip_before_filter :verify_authenticity_token
     before_filter :valid_token
-    before_filter :valid_seal, :except => :start
+    before_filter :valid_seal, :except => [:start, :error]
 
     def start
       # Start an omnikassa transaction
