@@ -4,7 +4,6 @@ Spree::CheckoutController.class_eval do
   def update
     # Intercept to do the omnikassa payment before finalizing this order
     if is_state_on_complete? and is_omnikassa_payment?
-      puts ">>>>>>>>>>>>>>>>>>>>>>>>>> #{@order.state}"
       # Omnikassa payment candidate, redirect to omnikassa controller
       redirect_to :controller => 'omnikassa', 
                   :action => 'start', 

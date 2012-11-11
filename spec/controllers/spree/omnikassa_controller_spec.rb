@@ -104,12 +104,23 @@ describe Spree::OmnikassaController do
     end
     
     describe 'payment flow' do
-      it 'creates a omnikassa payment object' do
-        seal = o.new(payment, '').seal response_data
+      before(:each) do
+        payment.send('started_processing!')
+        payment.save
+      end
+
+      def _post(d={})
+        data = response_data(d)
+        seal = o.new(payment, '').seal data
         spree_post :success, {:payment_id => payment.id, 
                               :token => o.token(payment.id),
-                              :Data => response_data,
+                              :Data => data,
                               :Seal => seal}
+        data
+      end
+
+      it 'creates a omnikassa payment object' do
+        reponse_data = _post
         data = o.new(payment, '').parse_data_string response_data
         omnikassa_payment = Spree::OmnikassaPayment.first
         omnikassa_payment.omnikassa_amount.should eq data[:amount].to_i
@@ -127,34 +138,26 @@ describe Spree::OmnikassaController do
         omnikassa_payment.omnikassa_response_code.should eq data[:responseCode]
       end
 
-      it 'keep the state to pending when another responseCode than 00 is given' do
-        data = response_data({:responseCode => '99'})
-        seal = o.new(payment, '').seal data
-        spree_post :success, {:payment_id => payment.id, 
-                              :token => o.token(payment.id),
-                              :Data => data,
-                              :Seal => seal}
-        payment.reload
-        payment.state.should eq 'pending'
-      end
-
       it 'sets the state to complete if 00 responseCode is given' do
-        data = response_data({:responseCode => '00'})
-        seal = o.new(payment, '').seal data
-        spree_post :success, {:payment_id => payment.id, 
-                              :token => o.token(payment.id),
-                              :Data => data,
-                              :Seal => seal}
+        data = _post({:responseCode => '00'})
         payment.reload
         payment.state.should eq 'completed'
       end
-      
+ 
+      it 'sets the state to pending if 60 responseCode is given' do
+        data = _post({:responseCode => '60'})
+        payment.reload
+        payment.state.should eq 'pending'
+      end     
+
+      it 'sets the state to failed responseCode is not 60(pending) or 00(success)' do
+        data = _post({:responseCode => '99'})
+        payment.reload
+        payment.state.should eq 'failed'
+      end     
+
       it 'redirects user' do
-        seal = o.new(payment, '').seal response_data
-        spree_post :success, {:payment_id => payment.id, 
-                              :token => o.token(payment.id),
-                              :Data => response_data,
-                              :Seal => seal}
+        _post
         response.status.should be 302
       end
     end

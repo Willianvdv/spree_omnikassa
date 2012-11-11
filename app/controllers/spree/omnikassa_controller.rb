@@ -7,49 +7,61 @@ module Spree
 
     def start
       # Start an omnikassa transaction
+      payment.send('started_processing!')
       @data = omnikassa.data
       @seal = omnikassa.seal @data
     end
 
     def success
-      data = omnikassa.parse_data_string params[:Data] 
+      ActiveRecord::Base.transaction do
+        data = omnikassa.parse_data_string params[:Data] 
 
-      # Validate
-      unless data[:amount] == omnikassa.amount.to_s
-        head :forbidden
-      end
+        # Validate
+        unless data[:amount] == omnikassa.amount.to_s
+          head :forbidden
+        end
       
-      unless data[:currencyCode] == omnikassa.currency_code
-        head :forbidden
-      end
+        unless data[:currencyCode] == omnikassa.currency_code
+          head :forbidden
+        end
       
-      unless data[:merchantId] == omnikassa.merchant_id
-        head :forbidden
-      end
+        unless data[:merchantId] == omnikassa.merchant_id
+          head :forbidden
+        end
 
-      # Create omnikassa payment object
-      Spree::OmnikassaPayment.create({
-        :omnikassa_amount => data[:amount],
-        :omnikassa_capture_day => data[:captureDay],
-        :omnikassa_capture_mode => data[:captureMode], 
-        :omnikassa_currency_code => data[:currencyCode],
-        :omnikassa_merchant_id => data[:merchantId],
-        :omnikassa_order_id  => data[:orderId],
-        :omnikassa_transaction_date_time => data[:transactionDateTime],
-        :omnikassa_transaction_reference => data[:transactionReference],
-        :omnikassa_authorisation_id => data[:authorisationId],
-        :omnikassa_key_version => data[:keyVersion],
-        :omnikassa_payment_mean_brand => data[:paymentMeanBrand],
-        :omnikassa_payment_mean_type => data[:paymentMeanType],
-        :omnikassa_response_code => data[:responseCode],
-      })
+        # Create omnikassa payment object
+        Spree::OmnikassaPayment.create({
+          :omnikassa_amount => data[:amount],
+          :omnikassa_capture_day => data[:captureDay],
+          :omnikassa_capture_mode => data[:captureMode], 
+          :omnikassa_currency_code => data[:currencyCode],
+          :omnikassa_merchant_id => data[:merchantId],
+          :omnikassa_order_id  => data[:orderId],
+          :omnikassa_transaction_date_time => data[:transactionDateTime],
+          :omnikassa_transaction_reference => data[:transactionReference],
+          :omnikassa_authorisation_id => data[:authorisationId],
+          :omnikassa_key_version => data[:keyVersion],
+          :omnikassa_payment_mean_brand => data[:paymentMeanBrand],
+          :omnikassa_payment_mean_type => data[:paymentMeanType],
+          :omnikassa_response_code => data[:responseCode],
+        })
 
-      # Set payment state to completed if response code is 00
-      if data[:responseCode] == '00'
-        payment.send("complete!")
-      end
+        response_code = data[:responseCode]
+        if response_code == '00'
+          payment.send("complete!")
+          # TODO: Find a way to call the original update method on the CheckoutController
+          order.next
+        elsif response_code == '60'
+          payment.send("pend!")         
+        else
+          payment.send("failure!")
+        end
 
-      redirect_to order_url(order) 
+        #payment.save
+        
+        order.next
+        redirect_to order_url(order)
+      end 
     end
 
     def success_automatic
