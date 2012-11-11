@@ -138,6 +138,12 @@ describe Spree::OmnikassaController do
         omnikassa_payment.omnikassa_response_code.should eq data[:responseCode]
       end
 
+      it 'sets a reference from the omnikassa payment to the payment' do
+        data = _post({:responseCode => '00'})
+        omnikassa_payment = Spree::OmnikassaPayment.first
+        omnikassa_payment.payment.id.should equal payment.id
+      end
+
       it 'sets the state to complete if 00 responseCode is given' do
         data = _post({:responseCode => '00'})
         payment.reload

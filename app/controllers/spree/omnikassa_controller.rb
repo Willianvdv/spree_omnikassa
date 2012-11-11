@@ -31,6 +31,7 @@ module Spree
 
         # Create omnikassa payment object
         Spree::OmnikassaPayment.create({
+          :payment => payment,
           :omnikassa_amount => data[:amount],
           :omnikassa_capture_day => data[:captureDay],
           :omnikassa_capture_mode => data[:captureMode], 

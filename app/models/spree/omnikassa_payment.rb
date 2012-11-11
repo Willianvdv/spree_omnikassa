@@ -1,6 +1,7 @@
 module Spree
   class OmnikassaPayment < ActiveRecord::Base
-    attr_accessible :omnikassa_amount,
+    attr_accessible :payment,
+                    :omnikassa_amount,
                     :omnikassa_capture_day,
                     :omnikassa_capture_mode,
                     :omnikassa_currency_code,
@@ -13,5 +14,6 @@ module Spree
                     :omnikassa_payment_mean_brand,
                     :omnikassa_payment_mean_type,
                     :omnikassa_response_code
+    belongs_to :payment
   end
 end
