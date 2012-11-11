@@ -15,15 +15,14 @@ module Spree
       data = omnikassa.parse_data_string params[:Data] 
 
       # Validate
-      # Check amount
       unless data[:amount] == omnikassa.amount.to_s
         head :forbidden
       end
-      # Check currencyCode
+      
       unless data[:currencyCode] == omnikassa.currency_code
         head :forbidden
       end
-      # Check merchantId
+      
       unless data[:merchantId] == omnikassa.merchant_id
         head :forbidden
       end
@@ -98,10 +97,3 @@ module Spree
       end
   end
 end
-
-#{"Data"=>"amount=17009|captureDay=0|captureMode=AUTHOR_CAPTURE|currencyCode=978|merchantId=002020000000001|orderId=null|transactionDateTime=2012-11-10T14:04:33+01:00|transactionReference=PREFIX1069267069194|keyVersion=1|authorisationId=0020000006791167|paymentMeanBrand=IDEAL|paymentMeanType=CREDIT_TRANSFER|responseCode=00",
-#   "InterfaceVersion"=>"HP_1.0",
-#    "Encode"=>"",
-#     "Seal"=>"d6c09e482d2a62a3daef755d26ce0058b1b826cb8ee42b0e133a965d6fafb8c1",
-#      "payment_id"=>"194",
-#       "token"=>"45475a9001"}

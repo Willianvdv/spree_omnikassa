@@ -1,6 +1,6 @@
 class CreateSpreeOmnikassaPayments < ActiveRecord::Migration
   def change
-    create_table :omnikassa_payments do |t|
+    create_table :spree_omnikassa_payments do |t|
       t.integer :omnikassa_amount
       t.string :omnikassa_capture_day
       t.string :omnikassa_capture_mode
