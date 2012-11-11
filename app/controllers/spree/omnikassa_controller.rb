@@ -51,16 +51,18 @@ module Spree
           payment.send("complete!")
           # TODO: Find a way to call the original update method on the CheckoutController
           order.next
+          flash[:success] = t(:payment_success)
+          redirect_to order_url(order)
         elsif response_code == '60'
-          payment.send("pend!")         
+          payment.send("pend!")
+          order.next 
+          flash[:error] = t(:payment_pending) 
+          redirect_to order_url(order)
         else
           payment.send("failure!")
+          flash[:error] = t(:payment_failed)
+          redirect_to order_url(order)
         end
-
-        #payment.save
-        
-        order.next
-        redirect_to order_url(order)
       end 
     end
 
