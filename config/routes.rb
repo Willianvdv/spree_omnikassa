@@ -2,7 +2,7 @@ Spree::Core::Engine.routes.draw do
   get '/omnikassa/start/:payment_id/:token/', 
       :to => 'omnikassa#start', 
       :as => :omnikassa_start
-  post '/omnikassa/error/:payment_id/:token/', 
+  get '/omnikassa/error/:payment_id/:token/', 
       :to => 'omnikassa#error', 
       :as => :omnikassa_error
   post '/omnikassa/success/:payment_id/:token/', 

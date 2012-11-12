@@ -62,7 +62,7 @@ module Spree
         else
           payment.send("failure!")
           flash[:error] = t(:payment_failed)
-          redirect_to order_url(order)
+          redirect_to :omnikassa_error
         end
       end 
     end
