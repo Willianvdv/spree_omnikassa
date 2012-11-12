@@ -1,7 +1,7 @@
 # Sample localization file for English. Add more files in this directory for other locales.
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
-en:
-  payment_success: "Your payment has been processed successfully"
-  payment_error: "Sorry, there were problems with your payment"
-  payment_pending: "Your payment is being processed"
+nl:
+  payment_success: "Uw betaling is succesvol verwerkt"
+  payment_error: "Sorry, er zijn problemen met uw betaling"
+  payment_pending: "Uw betaling is in behandeling"
