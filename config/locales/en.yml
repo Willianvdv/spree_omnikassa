@@ -2,4 +2,6 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  payment_success: "You're payment has been processed successfully"
+  payment_success: "Your payment has been processed successfully"
+  payment_error: "Sorry, there were problems with your payment"
+  payment_pending: "Your payment is being processed"

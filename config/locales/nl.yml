@@ -3,3 +3,5 @@
 
 nl:
   payment_success: "Uw betaling is succesvol verwerkt"
+  payment_error: "Sorry, er zijn problemen met uw betaling"
+  payment_pending: "Uw betaling is in behandeling"
