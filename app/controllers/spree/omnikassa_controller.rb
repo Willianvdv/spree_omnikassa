@@ -69,6 +69,9 @@ module Spree
 
     def success_automatic
       # Automatic success response
+      if payment.state == 'processing'
+        success
+      end
     end
 
     def error
