@@ -16,6 +16,7 @@ Spree::CheckoutController.class_eval do
   end
 
   private
+
     def token
       Spree::Omnikassa.token payment.id
     end
