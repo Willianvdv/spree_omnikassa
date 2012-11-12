@@ -18,7 +18,7 @@ module Spree
     describe 'request' do
 
       it 'has a seal' do
-        s = '4c40701467265276170676524ba5f8a81dcf622bc932b35268e189ff97d6b062'
+        s = '67e1b8f3b80b7d6be7f0e63d14da0a5b07f14be0b241010d9e89f8c81d3939d1'
         subject.seal(subject.data).should eq s
       end
 
