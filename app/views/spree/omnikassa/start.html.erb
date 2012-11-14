@@ -1,10 +1,14 @@
-<h1><%= t(:redirect_to_payment_provider) %></h1>
-<form action="https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet " method="post">
-  <input type="hidden" name="Seal" value="<%= @seal %>"/><br/>
-  <input type="hidden" name="Data" value="<%= @data %>"/><br/>
-  <input type="hidden" name="InterfaceVersion" value="HP_1.0"/><br/>
-</form>
+<div class="normalpage">
+  <h1><%= t(:redirect_to_payment_provider)  %></h1>
+  <%= form_tag('https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet') do %>
+    <%= hidden_field_tag 'Seal', @seal %>
+    <%= hidden_field_tag 'Data', @data %>
+    <%= hidden_field_tag 'InterfaceVersion', 'HP_1.0' %>
+    <p><%= t(:redirect_takes_to_long) %></p>
+    <%= button_tag  t(:continue_to_payment_provider), :class => 'btn button' %>
+  <% end %>
 
-<script type="text/javascript">
-  $('form').submit();
-</script>
+  <script type="text/javascript">
+    $('form').submit();
+  </script>
+</div>
