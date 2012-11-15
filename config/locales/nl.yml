@@ -5,3 +5,7 @@ nl:
   payment_success: "Uw betaling is succesvol verwerkt"
   payment_error: "Sorry, er zijn problemen met uw betaling"
   payment_pending: "Uw betaling is in behandeling"
+  redirect_to_payment_provider: "U wordt doorgestuurd naar de betaalomgeving"
+  redirect_takes_to_long: "Duurt het doorsturen te lang? Klik op de onderstaande knop om verder te gaan"
+  continue_to_payment_provider: "Naar de betaalomgeving"
+
