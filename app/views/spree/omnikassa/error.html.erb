@@ -1,3 +1,5 @@
-<h1>ERRROOORRRRR</h1>
-
-<p>ALLES IS KAPOT</p>
+<div class="normalpage">
+  <h1><%= t(:payment_not_succeeded) %></h1>
+  <p><%= t(:payment_error) %>.</p>
+  <%= link_to t(:try_again), cart_path, :class => 'btn button' %>
+</div>
