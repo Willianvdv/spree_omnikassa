@@ -11,4 +11,5 @@ nl:
   continue_to_payment_provider: "Naar de betaalomgeving"
   pay_with_omnikassa: "Betalen met iDeal via Rabobank Omnikassa"
   payment_not_succeeded: "Uw betaling is mislukt"
+  omnikassa_settings: "Omnikassa instellingen"
 

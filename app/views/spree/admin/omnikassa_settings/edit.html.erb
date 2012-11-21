@@ -4,6 +4,8 @@
   <%= t(:omnikassa_settings) %>
 <% end %>
 
+<h1><%= t(:omnikassa_settings) %></h1>
+
 <%= form_tag admin_omnikassa_settings_path, :method => :put do %>
   <div id="omnikassa_preferences" data-hook>
     
@@ -18,9 +20,10 @@
       <% end %>
 
       <div class="form-buttons filter-actions actions" data-hook="buttons">
-        <%= button t(:update), 'icon-refresh' %>
-        <span class="or"><%= t(:or) %></span>
-        <%= link_to_with_icon 'icon-remove', t(:cancel), admin_omnikassa_settings_url, :class => 'button' %>
+        <p class="form-buttons">
+          <%= button t(:update) %>
+          <%= t(:or) %> <%= link_to t(:cancel), admin_omnikassa_settings_url %>
+        </p>
       </div>
 
     </fieldset>

@@ -11,3 +11,4 @@ en:
   continue_to_payment_provider: "Continue to the payment provider"
   pay_with_omnikassa: "Pay with iDeal true Omnikassa"
   payment_not_succeeded: "Your payment has failed"
+  omnikassa_settings: "Omnikassa settings"
