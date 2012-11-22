@@ -6,5 +6,5 @@ Deface::Override.new(:virtual_path => "spree/admin/payments/_list",
 Deface::Override.new(:virtual_path => "spree/admin/payments/_list",
                      :name => "add_omnikassa_payment_state_to_payment_body",
                      :insert_bottom => '[data-hook="payments_row"]',
-                     :text => '<td><% if payment.payment_method.class == Spree::BillingIntegration::Omnikassa %><%= payment.omnikassa_payment.omnikassa_response_code %><% end %></td>')
+                     :text => '<td><% if payment.payment_method.class == Spree::BillingIntegration::Omnikassa %><%= payment.omnikassa_payment.try(:omnikassa_response_code) %><% end %></td>')
 
