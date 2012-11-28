@@ -10,6 +10,7 @@ module Spree
       payment.send('started_processing!')
       @data = omnikassa.data
       @seal = omnikassa.seal @data
+      @url = Spree::Config[:omnikassa_url]  
     end
 
     def success

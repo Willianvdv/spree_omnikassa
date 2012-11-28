@@ -1,6 +1,6 @@
 <div class="normalpage">
   <h1><%= t(:redirect_to_payment_provider)  %></h1>
-  <%= form_tag('https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet') do %>
+  <%= form_tag(@url) do %>
     <%= hidden_field_tag 'Seal', @seal %>
     <%= hidden_field_tag 'Data', @data %>
     <%= hidden_field_tag 'InterfaceVersion', 'HP_1.0' %>
@@ -9,6 +9,6 @@
   <% end %>
 
   <script type="text/javascript">
-    $('form').submit();
+   // $('form').submit();
   </script>
 </div>
