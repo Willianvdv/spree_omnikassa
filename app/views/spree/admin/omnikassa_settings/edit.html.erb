@@ -1,0 +1,34 @@
+<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
+<% content_for :page_title do %>
+  <%= t(:omnikassa_settings) %>
+<% end %>
+
+<h1><%= t(:omnikassa_settings) %></h1>
+
+<%= form_tag admin_omnikassa_settings_path, :method => :put do %>
+  <div id="omnikassa_preferences" data-hook>
+    
+    <fieldset class="general no-border-top">
+      <% @preferences_omnikassa.each do |key|
+          type = Spree::Config.preference_type(key) %>
+          <div class="field">
+            <%= label_tag(key, t(key) + ': ') + tag(:br) if type != :boolean %>
+            <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
+            <%= label_tag(key, t(key)) + tag(:br) if type == :boolean %>
+          </div>
+      <% end %>
+
+      <div class="form-buttons filter-actions actions" data-hook="buttons">
+        <p class="form-buttons">
+          <%= button t(:update) %>
+          <%= t(:or) %> <%= link_to t(:cancel), admin_omnikassa_settings_url %>
+        </p>
+      </div>
+
+    </fieldset>
+     
+  </div>
+
+  
+<% end %>

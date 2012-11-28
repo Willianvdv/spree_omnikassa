@@ -11,4 +11,8 @@ Spree::Core::Engine.routes.draw do
   post '/omnikassa/success/automatic/:payment_id/:token/', 
       :to => 'omnikassa#automatic', 
       :as => :omnikassa_success_automatic
+
+  namespace :admin do
+    resource :omnikassa_settings
+  end
 end
