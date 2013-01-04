@@ -23,9 +23,10 @@ describe Spree::OmnikassaController do
       assigns(:data).should == 'amount=4575|currencyCode=978|merchantId=1337|normalReturnUrl=http://test.host/omnikassa/success/1/a5a770d4cc/|automaticResponseUrl=http://test.host/omnikassa/success/automatic/1/a5a770d4cc/|transactionReference=PREFIX11|keyVersion=7'
     end
 
-    #it 'assigns a @seal' do
-    #  spree_get :start
-    #end
+    it 'assigns a @seal' do
+      spree_get :start
+      assigns(:seal).should == 'q'
+    end
 
     #it 'assigns a @url' do
     #  spree_get :start
