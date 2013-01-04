@@ -24,8 +24,8 @@ describe Spree::OmnikassaController do
     end
 
     it 'assigns a @seal' do
-      spree_get :start
-      assigns(:seal).should == 'q'
+      spree_get :start, :payment_id => payment.id
+      assigns(:seal).should == '6903457adcd3fa655f1847137628f407bf118a4c0ec4a1b7fafc56cf3de360fe'
     end
 
     #it 'assigns a @url' do

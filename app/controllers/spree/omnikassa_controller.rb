@@ -9,7 +9,7 @@ module Spree
       # Start an omnikassa transaction
       payment.send('started_processing!')
       @data = data_string
-      #@seal = self.seal @data
+      @seal = seal @data
       #@url = Spree::Config[:omnikassa_url]
     end
 
@@ -116,6 +116,14 @@ module Spree
 
       def order
         payment.order
+      end
+
+      def secret
+        Spree::Config[:omnikassa_secret_key]
+      end
+
+      def seal d
+        (Digest::SHA256.new << "#{d}#{secret}").to_s
       end
 
       # REQ
@@ -254,10 +262,6 @@ module Spree
       def payment
         Spree::Payment.find(params[:payment_id])
       end
-
-      # def order
-      #   payment.order
-      # end
 
       # FLTRS
       def valid_token
