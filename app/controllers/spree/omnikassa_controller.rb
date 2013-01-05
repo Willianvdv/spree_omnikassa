@@ -3,51 +3,37 @@ module Spree
     #ssl_required
     #skip_before_filter :verify_authenticity_token
     #before_filter :valid_token
-    #before_filter :valid_seal, :except => [:start, :error]
+    before_filter :valid_seal, :except => [:start, :error]
 
     def start
       # Start an omnikassa transaction
-      payment.send('started_processing!')
       @data = data_string
       @seal = seal @data
-      #@url = Spree::Config[:omnikassa_url]
+      @url = Spree::Config[:omnikassa_url]
     end
 
-    # def success
-    #   ActiveRecord::Base.transaction do
-    #     data = omnikassa.parse_data_string params[:Data]
+    def success
+      ActiveRecord::Base.transaction do
+        data = parse_data_string params[:Data]
 
-    #     # Validate
-    #     unless data[:amount] == omnikassa.amount.to_s
-    #       head :forbidden
-    #     end
+        Spree::OmnikassaPayment.create!({
+          :payment => payment,
+          :omnikassa_amount => data[:amount],
+          :omnikassa_capture_day => data[:captureDay],
+          :omnikassa_capture_mode => data[:captureMode],
+          :omnikassa_currency_code => data[:currencyCode],
+          :omnikassa_merchant_id => data[:merchantId],
+          :omnikassa_order_id  => data[:orderId],
+          :omnikassa_transaction_date_time => data[:transactionDateTime],
+          :omnikassa_transaction_reference => data[:transactionReference],
+          :omnikassa_authorisation_id => data[:authorisationId],
+          :omnikassa_key_version => data[:keyVersion],
+          :omnikassa_payment_mean_brand => data[:paymentMeanBrand],
+          :omnikassa_payment_mean_type => data[:paymentMeanType],
+          :omnikassa_response_code => data[:responseCode],
+        })
 
-    #     unless data[:currencyCode] == omnikassa.currency_code
-    #       head :forbidden
-    #     end
-
-    #     unless data[:merchantId] == omnikassa.merchant_id
-    #       head :forbidden
-    #     end
-
-    #     # Create omnikassa payment object
-    #     Spree::OmnikassaPayment.create({
-    #       :payment => payment,
-    #       :omnikassa_amount => data[:amount],
-    #       :omnikassa_capture_day => data[:captureDay],
-    #       :omnikassa_capture_mode => data[:captureMode],
-    #       :omnikassa_currency_code => data[:currencyCode],
-    #       :omnikassa_merchant_id => data[:merchantId],
-    #       :omnikassa_order_id  => data[:orderId],
-    #       :omnikassa_transaction_date_time => data[:transactionDateTime],
-    #       :omnikassa_transaction_reference => data[:transactionReference],
-    #       :omnikassa_authorisation_id => data[:authorisationId],
-    #       :omnikassa_key_version => data[:keyVersion],
-    #       :omnikassa_payment_mean_brand => data[:paymentMeanBrand],
-    #       :omnikassa_payment_mean_type => data[:paymentMeanType],
-    #       :omnikassa_response_code => data[:responseCode],
-    #     })
-
+        redirect_to order_url(order)
     #     response_code = data[:responseCode]
 
     #     if response_code == '00'
@@ -66,8 +52,8 @@ module Spree
     #       flash[:error] = t(:payment_failed)
     #       redirect_to :omnikassa_error
     #     end
-    #   end
-    # end
+      end
+    end
 
     # def success_automatic
     #   # Automatic success response
@@ -161,6 +147,11 @@ module Spree
         Spree::Config[:omnikassa_key_version]
       end
 
+      # SCCS
+      def parse_data_string data_string
+        Rack::Utils.parse_nested_query(data_string.gsub('|','&')).deep_symbolize_keys
+      end
+
 
 
       # def amount
@@ -241,16 +232,6 @@ module Spree
       #   (Digest::SHA256.new << a).to_s()[0,10]
       # end
 
-      # def valid_seal
-      #   unless has_valid_seal?
-      #     flash[:error] = "Invalid seal"
-      #     head :forbidden
-      #   end
-      # end
-
-      # def has_valid_seal?
-      #   omnikassa.seal(params[:Data]) == params[:Seal]
-      # end
 
 
 
@@ -283,7 +264,7 @@ module Spree
       end
 
       def has_valid_seal?
-        omnikassa.seal(params[:Data]) == params[:Seal]
+        seal(params[:Data]) == params[:Seal]
       end
   end
 end

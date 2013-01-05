@@ -28,10 +28,96 @@ describe Spree::OmnikassaController do
       assigns(:seal).should == '6903457adcd3fa655f1847137628f407bf118a4c0ec4a1b7fafc56cf3de360fe'
     end
 
-    #it 'assigns a @url' do
-    #  spree_get :start
-    #end
+    it 'assigns a @url' do
+      spree_get :start, :payment_id => payment.id
+      assigns(:url).should == 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
+    end
   end
+
+  describe 'GET success' do
+    def _create_omnikassa_response d={}
+      data = "amount=4575|" \
+             "captureDay=0|" \
+             "captureMode=AUTHOR_CAPTURE|" \
+             "currencyCode=978|" \
+             "merchantId=1337|" \
+             "orderId=null|" \
+             "transactionDateTime=2012-11-10T14:04:33+01:00|" \
+             "transactionReference=PREFIX#{order.id}#{payment.id}|" \
+             "keyVersion=1|" \
+             "authorisationId=0020000006791167|" \
+             "paymentMeanBrand=IDEAL|" \
+             "paymentMeanType=CREDIT_TRANSFER|" \
+             "responseCode=#{d[:responseCode] or '00'}"
+
+      secret = Spree::Config[:omnikassa_secret_key]
+      seal = (Digest::SHA256.new << "#{data}#{secret}").to_s
+      return data, seal
+    end
+
+    it 'reject request with invalid seal' do
+      spree_post :success, :payment_id => payment.id,
+                           :Data => {:field => 'x'},
+                           :seal => 'heidi'
+      expect(response.response_code).to equal 403
+    end
+
+    context 'successfull omnikassa response' do
+      before do
+        data, seal = _create_omnikassa_response
+        spree_post :success, :payment_id => payment.id, :Data => data, :Seal => seal
+        @omnikassa_payment = Spree::OmnikassaPayment.last
+      end
+
+      it 'has the payment set on the omnikassa_payment' do
+        expect(@omnikassa_payment.payment).to eq payment
+      end
+
+      it 'sets the payment to completed' do
+        pending
+      end
+
+      it 'sets the order on the next state' do
+        pending
+      end
+
+      it 'redirects to the checkout' do
+        pending
+      end
+    end
+
+    context 'unsuccessfull omnikassa response' do
+    end
+  end
+
+  # #          :omnikassa_amount => data[:amount],
+  #         :omnikassa_capture_day => data[:captureDay],
+  #         :omnikassa_capture_mode => data[:captureMode],
+  #         :omnikassa_currency_code => data[:currencyCode],
+  #         :omnikassa_merchant_id => data[:merchantId],
+  #         :omnikassa_order_id  => data[:orderId],
+  #         :omnikassa_transaction_date_time => data[:transactionDateTime],
+  #         :omnikassa_transaction_reference => data[:transactionReference],
+  #         :omnikassa_authorisation_id => data[:authorisationId],
+  #         :omnikassa_key_version => data[:keyVersion],
+  #         :omnikassa_payment_mean_brand => data[:paymentMeanBrand],
+  #         :omnikassa_payment_mean_type => data[:paymentMeanType],
+  #         :omnikassa_response_code => data[:responseCode],
+  #       })
+
+  #{}"amount=#{d[:amount] or '4575'}|" \
+  #     "captureDay=0|" \
+  #     "captureMode=AUTHOR_CAPTURE|" \
+  #     "currencyCode=#{d[:currencyCode] or '978'}|" \
+  #     "merchantId=#{d[:merchantId] or Spree::Config.omnikassa_merchant_id}|" \
+  #     "orderId=null|" \
+  #     "transactionDateTime=2012-11-10T14:04:33+01:00|" \
+  #     "transactionReference=PREFIX#{order.id}#{payment.id}|" \
+  #     "keyVersion=1|" \
+  #     "authorisationId=0020000006791167|" \
+  #     "paymentMeanBrand=IDEAL|" \
+  #     "paymentMeanType=CREDIT_TRANSFER|" \
+  #     "responseCode=#{d[:responseCode] or '00'}"
 
   # context 'token' do
   #   it 'will respond a 403 if a invalid token is given' do
@@ -125,15 +211,7 @@ describe Spree::OmnikassaController do
   #       payment.save
   #     end
 
-  #     def _post(d={})
-  #       data = response_data(d)
-  #       seal = o.new(payment, '').seal data
-  #       spree_post :success, {:payment_id => payment.id,
-  #                             :token => o.token(payment.id),
-  #                             :Data => data,
-  #                             :Seal => seal}
-  #       data
-  #     end
+
 
   #     it 'creates a omnikassa payment object' do
   #       reponse_data = _post
