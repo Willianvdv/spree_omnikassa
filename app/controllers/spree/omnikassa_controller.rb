@@ -1,7 +1,7 @@
 module Spree
   class OmnikassaController < Spree::BaseController
     #ssl_required
-    #skip_before_filter :verify_authenticity_token
+    skip_before_filter :verify_authenticity_token
     #before_filter :valid_token
     before_filter :valid_seal, :except => [:start, :error]
 
@@ -33,38 +33,35 @@ module Spree
           :omnikassa_response_code => data[:responseCode],
         })
 
-        redirect_to order_url(order)
-    #     response_code = data[:responseCode]
+        response_code = data[:responseCode]
+        if response_code == '00'
+          if payment.state != 'completed'
+            payment.send("complete!")
+            flash[:success] = t(:payment_success)
+            order.next
+          end
+        elsif response_code == '60'
+            flash[:error] = t(:payment_pending)
+            order.next
+        else
+          if payment.state != 'failed'
+            payment.send("failure!")
+            flash[:error] = t(:payment_failed)
+          end
+        end
 
-    #     if response_code == '00'
-    #       payment.send("complete!")
-    #       # TODO: Find a way to call the original update method on the CheckoutController
-    #       order.next
-    #       flash[:success] = t(:payment_success)
-    #       redirect_to order_url(order)
-    #     elsif response_code == '60'
-    #       payment.send("pend!")
-    #       order.next
-    #       flash[:error] = t(:payment_pending)
-    #       redirect_to order_url(order)
-    #     else
-    #       payment.send("failure!")
-    #       flash[:error] = t(:payment_failed)
-    #       redirect_to :omnikassa_error
-    #     end
+        redirect_to order_url(order)
+
       end
     end
 
-    # def success_automatic
-    #   # Automatic success response
-    #   if payment.state == 'processing'
-    #     success
-    #   end
-    # end
+    def success_automatic
+      success
+    end
 
-    # def error
-    #   # Error
-    # end
+    def error
+      # Error
+    end
 
     private
 

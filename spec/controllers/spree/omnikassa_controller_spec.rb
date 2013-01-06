@@ -1,92 +1,190 @@
 require 'spec_helper'
 
+def _create_omnikassa_response d={}
+  data = "amount=4575|" \
+         "captureDay=0|" \
+         "captureMode=AUTHOR_CAPTURE|" \
+         "currencyCode=978|" \
+         "merchantId=1337|" \
+         "orderId=null|" \
+         "transactionDateTime=2012-11-10T14:04:33+01:00|" \
+         "transactionReference=PREFIX#{@payment.order.id}#{@payment.id}|" \
+         "keyVersion=1|" \
+         "authorisationId=0020000006791167|" \
+         "paymentMeanBrand=IDEAL|" \
+         "paymentMeanType=CREDIT_TRANSFER|" \
+         "responseCode=#{d[:response_code] or '00'}"
+
+  secret = Spree::Config[:omnikassa_secret_key]
+  seal = (Digest::SHA256.new << "#{data}#{secret}").to_s
+  return data, seal
+end
+
 describe Spree::OmnikassaController do
   include_context 'omnikassa'
 
-  let(:payment) do
-    FactoryGirl.create :payment
-  end
+  #let(:payment) do
+  #  FactoryGirl.create :payment
+  #end
 
   let(:order) do
-    payment.order
+    @payment.order
   end
 
   let(:o) do
     Spree::Omnikassa
   end
 
-  before { controller.stub :current_order => order }
+  before :each do
+    #controller.stub :current_order => order
+    @payment = FactoryGirl.create :payment
+  end
 
   describe 'GET start' do
     it 'assigns a @data string' do
-      spree_get :start, :payment_id => payment.id
+      spree_get :start, :payment_id => @payment.id
       assigns(:data).should == 'amount=4575|currencyCode=978|merchantId=1337|normalReturnUrl=http://test.host/omnikassa/success/1/a5a770d4cc/|automaticResponseUrl=http://test.host/omnikassa/success/automatic/1/a5a770d4cc/|transactionReference=PREFIX11|keyVersion=7'
     end
 
     it 'assigns a @seal' do
-      spree_get :start, :payment_id => payment.id
+      spree_get :start, :payment_id => @payment.id
       assigns(:seal).should == '6903457adcd3fa655f1847137628f407bf118a4c0ec4a1b7fafc56cf3de360fe'
     end
 
     it 'assigns a @url' do
-      spree_get :start, :payment_id => payment.id
+      spree_get :start, :payment_id => @payment.id
       assigns(:url).should == 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
     end
   end
 
   describe 'GET success' do
-    def _create_omnikassa_response d={}
-      data = "amount=4575|" \
-             "captureDay=0|" \
-             "captureMode=AUTHOR_CAPTURE|" \
-             "currencyCode=978|" \
-             "merchantId=1337|" \
-             "orderId=null|" \
-             "transactionDateTime=2012-11-10T14:04:33+01:00|" \
-             "transactionReference=PREFIX#{order.id}#{payment.id}|" \
-             "keyVersion=1|" \
-             "authorisationId=0020000006791167|" \
-             "paymentMeanBrand=IDEAL|" \
-             "paymentMeanType=CREDIT_TRANSFER|" \
-             "responseCode=#{d[:responseCode] or '00'}"
-
-      secret = Spree::Config[:omnikassa_secret_key]
-      seal = (Digest::SHA256.new << "#{data}#{secret}").to_s
-      return data, seal
-    end
-
     it 'reject request with invalid seal' do
-      spree_post :success, :payment_id => payment.id,
-                           :Data => {:field => 'x'},
-                           :seal => 'heidi'
+      spree_post :success, :payment_id => @payment.id, :Data => {:field => 'x'}, :seal => 'heidi'
       expect(response.response_code).to equal 403
     end
 
-    context 'successfull omnikassa response' do
+    # before do
+    #   data, seal = _create_omnikassa_response
+    #   spree_post :success, :payment_id => @payment.id, :Data => data, :Seal => seal
+    #   @omnikassa_payment = Spree::OmnikassaPayment.last
+    # end
+
+    # it 'has the payment set on the omnikassa_payment' do
+    #   expect(@omnikassa_payment.payment).to eq @payment
+    # end
+
+    context 'with successfull omnikassa response' do
       before do
         data, seal = _create_omnikassa_response
-        spree_post :success, :payment_id => payment.id, :Data => data, :Seal => seal
-        @omnikassa_payment = Spree::OmnikassaPayment.last
+        spree_post :success, :payment_id => @payment.id, :Data => data, :Seal => seal
       end
 
-      it 'has the payment set on the omnikassa_payment' do
-        expect(@omnikassa_payment.payment).to eq payment
-      end
-
-      it 'sets the payment to completed' do
-        pending
+      it 'sets the payment state to completed' do
+        @payment.reload
+        expect(@payment.state).to eq 'completed'
       end
 
       it 'sets the order on the next state' do
-        pending
+        expect(@payment.order.state).not_to eq 'payment'
       end
 
       it 'redirects to the checkout' do
-        pending
+        u = "http://test.host/orders/#{@payment.order.number}"
+        expect(response.response_code).to redirect_to(u)
       end
     end
 
-    context 'unsuccessfull omnikassa response' do
+    context 'with pending state omnikassa response' do
+      before do
+        data, seal = _create_omnikassa_response({:response_code => '60'})
+        spree_post :success, :payment_id => @payment.id, :Data => data, :Seal => seal
+      end
+
+      it 'sets the payment state to pending' do
+        @payment.reload
+        expect(@payment.state).to eq 'pending'
+      end
+
+      it 'sets the order on the next state' do
+        expect(@payment.order.state).not_to eq 'payment'
+      end
+
+      it 'redirects to the checkout' do
+        u = "http://test.host/orders/#{@payment.order.number}"
+        expect(response.response_code).to redirect_to(u)
+      end
+    end
+
+    context 'with failed state omnikassa response' do
+      before do
+        data, seal = _create_omnikassa_response({:response_code => '99'})
+        spree_post :success, :payment_id => @payment.id, :Data => data, :Seal => seal
+      end
+
+      it 'sets the payment state to failed' do
+        @payment.reload
+        expect(@payment.state).to eq 'failed'
+      end
+
+      it 'redirects to the omnikassa error action' do
+        u = "http://test.host/orders/#{@payment.order.number}"
+        expect(response.response_code).to redirect_to(u)
+      end
+    end
+
+    describe 'GET automatic_success' do
+      context 'with success state omnikassa response' do
+        before do
+          # Normal success call
+          data, seal = _create_omnikassa_response
+          spree_post :success, :payment_id => @payment.id, :Data => data, :Seal => seal
+
+          # Automatic success call
+          data, seal = _create_omnikassa_response
+          spree_post :success_automatic, :payment_id => @payment.id, :Data => data, :Seal => seal
+        end
+
+        it 'sets the payment state to completed' do
+          @payment.reload
+          expect(@payment.state).to eq 'completed'
+        end
+
+      end
+
+      context 'with failed state omnikassa response' do
+        before do
+          # Normal success call
+          data, seal = _create_omnikassa_response({:response_code => '99'})
+          spree_post :success, :payment_id => @payment.id, :Data => data, :Seal => seal
+
+          # Automatic success call
+          data, seal = _create_omnikassa_response({:response_code => '99'})
+          spree_post :success_automatic, :payment_id => @payment.id, :Data => data, :Seal => seal
+        end
+
+        it 'sets the payment state to failed' do
+          @payment.reload
+          expect(@payment.state).to eq 'failed'
+        end
+      end
+
+      context 'with pending state omnikassa response' do
+        before do
+          # Normal success call
+          data, seal = _create_omnikassa_response({:response_code => '60'})
+          spree_post :success, :payment_id => @payment.id, :Data => data, :Seal => seal
+
+          # Automatic success call
+          data, seal = _create_omnikassa_response({:response_code => '60'})
+          spree_post :success_automatic, :payment_id => @payment.id, :Data => data, :Seal => seal
+        end
+
+        it 'sets the payment state to pending' do
+          @payment.reload
+          expect(@payment.state).to eq 'pending'
+        end
+      end
+
     end
   end
 
@@ -246,7 +344,7 @@ describe Spree::OmnikassaController do
 
   #     it 'sets the state to pending if 60 responseCode is given' do
   #       data = _post({:responseCode => '60'})
-  #       payment.reload
+  #       payment.greload
   #       payment.state.should eq 'pending'
   #     end
 
