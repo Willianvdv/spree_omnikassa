@@ -112,7 +112,7 @@ describe Spree::OmnikassaController do
       end
 
       it 'redirects to the omnikassa error action' do
-        u = "http://test.host/orders/#{@payment.order.number}"
+        u = "http://test.host/omnikassa/error/#{@payment.id}/"
         expect(response.response_code).to redirect_to(u)
       end
     end
