@@ -7,6 +7,7 @@ module Spree
 
     def start
       # Start an omnikassa transaction
+      payment.send('started_processing!')
       @data = data_string
       @seal = seal @data
       @url = Spree::Config[:omnikassa_url]
@@ -125,11 +126,11 @@ module Spree
       end
 
       def normal_return_url
-        "#{uri}/omnikassa/success/#{payment.id}/#{payment_token}/"
+        "#{uri}/omnikassa/success/#{payment.id}/"
       end
 
       def automatic_response_url
-        "#{uri}/omnikassa/success/automatic/#{payment.id}/#{payment_token}/"
+        "#{uri}/omnikassa/success/automatic/#{payment.id}/"
       end
 
       def transaction_reference_prefix

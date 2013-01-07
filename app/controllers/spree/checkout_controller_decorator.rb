@@ -7,8 +7,8 @@ Spree::CheckoutController.class_eval do
       # Omnikassa payment candidate, redirect to omnikassa controller
       redirect_to :controller => 'omnikassa', 
                   :action => 'start', 
-                  :payment_id => payment.id,
-                  :token => token
+                  :payment_id => payment.id #,
+                  #:token => token
     else
       # Do original update stuff
       _update
@@ -17,9 +17,9 @@ Spree::CheckoutController.class_eval do
 
   private
 
-    def token
-      Spree::Omnikassa.token payment.id
-    end
+    #def token
+    #  Spree::Omnikassa.token payment.id
+    #end
 
     def payment
       @order.payments.first

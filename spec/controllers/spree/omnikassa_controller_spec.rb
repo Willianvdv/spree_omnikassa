@@ -23,10 +23,6 @@ end
 describe Spree::OmnikassaController do
   include_context 'omnikassa'
 
-  #let(:payment) do
-  #  FactoryGirl.create :payment
-  #end
-
   let(:order) do
     @payment.order
   end
@@ -36,19 +32,18 @@ describe Spree::OmnikassaController do
   end
 
   before :each do
-    #controller.stub :current_order => order
     @payment = FactoryGirl.create :payment
   end
 
   describe 'GET start' do
     it 'assigns a @data string' do
       spree_get :start, :payment_id => @payment.id
-      assigns(:data).should == 'amount=4575|currencyCode=978|merchantId=1337|normalReturnUrl=http://test.host/omnikassa/success/1/a5a770d4cc/|automaticResponseUrl=http://test.host/omnikassa/success/automatic/1/a5a770d4cc/|transactionReference=PREFIX11|keyVersion=7'
+      assigns(:data).should == 'amount=4575|currencyCode=978|merchantId=1337|normalReturnUrl=http://test.host/omnikassa/success/1/|automaticResponseUrl=http://test.host/omnikassa/success/automatic/1/|transactionReference=PREFIX11|keyVersion=7'
     end
 
     it 'assigns a @seal' do
       spree_get :start, :payment_id => @payment.id
-      assigns(:seal).should == '6903457adcd3fa655f1847137628f407bf118a4c0ec4a1b7fafc56cf3de360fe'
+      assigns(:seal).should == 'be356b07401bd7aa891897ae649a6af790ac940d8fa698407a84aac4678b63cf'
     end
 
     it 'assigns a @url' do
