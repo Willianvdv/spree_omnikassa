@@ -25,7 +25,7 @@ Update Omnikassa settings (or leave them as they are for testing)
 
 	http://0.0.0.0:3000/admin/omnikassa_settings/edit
 
-Create an payment method with `Spree::BillingIntegration::Omnikassa` as provider.
+Create a payment method with `Spree::BillingIntegration::Omnikassa` as provider.
 
 Known issues
 ------------
