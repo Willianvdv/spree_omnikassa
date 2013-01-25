@@ -9,7 +9,7 @@ Spree::Core::Engine.routes.draw do
       :to => 'omnikassa#success',
       :as => :omnikassa_success
   post '/omnikassa/success/automatic/:payment_id/',
-      :to => 'omnikassa#automatic',
+      :to => 'omnikassa#success_automatic',
       :as => :omnikassa_success_automatic
 
   namespace :admin do

@@ -38,9 +38,9 @@ module Spree
         if response_code == '00'
           if payment.state != 'completed'
             payment.send("complete!")
-            flash[:success] = t(:payment_success)
-            order.next
           end
+          flash[:success] = t(:payment_success)
+          order.next
           redirect_to order_url(order)
         elsif response_code == '60'
           flash[:error] = t(:payment_pending)

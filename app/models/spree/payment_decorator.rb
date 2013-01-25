@@ -1,3 +1,3 @@
 Spree::Payment.class_eval do
-  has_one :omnikassa_payment
+  has_many :omnikassa_payments
 end
