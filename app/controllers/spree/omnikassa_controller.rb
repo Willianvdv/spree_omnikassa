@@ -35,16 +35,18 @@ module Spree
         })
 
         response_code = data[:responseCode]
+
         if response_code == '00'
           if payment.state != 'completed'
             payment.send("complete!")
           end
           flash[:success] = t(:payment_success)
-          order.next
           redirect_to order_url(order)
         elsif response_code == '60'
-          flash[:error] = t(:payment_pending)
-          order.next
+          if payment.state != 'pending'
+            payment.pend!
+          end
+          flash[:error] = t(:payment_pending)  
           redirect_to order_url(order)
         else
           if payment.state != 'failed'
@@ -151,6 +153,7 @@ module Spree
       end
 
       def payment
+        # TODO: Check autorization
         Spree::Payment.find(params[:payment_id])
       end
 
