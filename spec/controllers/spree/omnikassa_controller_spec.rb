@@ -36,23 +36,35 @@ describe Spree::OmnikassaController do
   end
 
   describe 'GET start' do
-    it 'assigns a @data string' do
-      spree_get :start, :payment_id => @payment.id
-      assigns(:data).should == 'amount=4575|currencyCode=978|merchantId=1337|normalReturnUrl=http://test.host/omnikassa/success/1/|automaticResponseUrl=http://test.host/omnikassa/success/automatic/1/|transactionReference=PREFIX11|keyVersion=7'
+    describe 'assignment' do
+      it 'assigns a @data string' do
+        spree_get :start, :payment_id => @payment.id
+        assigns(:data).should == 'amount=4575|currencyCode=978|merchantId=1337|normalReturnUrl=http://test.host/omnikassa/success/1/|automaticResponseUrl=http://test.host/omnikassa/success/automatic/1/|transactionReference=PREFIX11|keyVersion=7'
+      end
+
+      it 'assigns a @seal' do
+        spree_get :start, :payment_id => @payment.id
+        assigns(:seal).should == 'be356b07401bd7aa891897ae649a6af790ac940d8fa698407a84aac4678b63cf'
+      end
+
+      it 'assigns a @url' do
+        spree_get :start, :payment_id => @payment.id
+        assigns(:url).should == 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
+      end
     end
 
-    it 'assigns a @seal' do
+    it 'sets the state to processing' do
       spree_get :start, :payment_id => @payment.id
-      assigns(:seal).should == 'be356b07401bd7aa891897ae649a6af790ac940d8fa698407a84aac4678b63cf'
-    end
-
-    it 'assigns a @url' do
-      spree_get :start, :payment_id => @payment.id
-      assigns(:url).should == 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
+      @payment.reload
+      expect(@payment.state).to eq('processing')
     end
   end
 
   describe 'GET success' do
+    before :each do
+      @payment.send(:started_processing!)
+    end
+
     it 'reject request with invalid seal' do
       spree_post :success, :payment_id => @payment.id, :Data => {:field => 'x'}, :seal => 'heidi'
       expect(response.response_code).to equal 403
