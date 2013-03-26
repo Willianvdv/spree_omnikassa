@@ -107,7 +107,7 @@ describe Spree::OmnikassaController do
       end
 
       it 'redirects to the checkout' do
-        u = "http://test.host/orders/#{@payment.order.number}"
+        u = "http://test.host/omnikassa/pending/#{@payment.id}/"
         expect(response.response_code).to redirect_to(u)
       end
     end

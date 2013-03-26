@@ -42,12 +42,14 @@ module Spree
           end
           flash[:success] = t(:payment_success)
           redirect_to order_url(order)
+        
         elsif response_code == '60'
           if payment.state != 'pending'
             payment.pend!
           end
           flash[:error] = t(:payment_pending)  
-          redirect_to order_url(order)
+          redirect_to "/omnikassa/pending/#{payment.id}/"
+        
         else
           if payment.state != 'failed'
             payment.send("failure!")
