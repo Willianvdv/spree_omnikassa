@@ -29,9 +29,17 @@ Create a payment method with `Spree::BillingIntegration::Omnikassa` as provider.
 
 Known issues
 ------------
-* Onmikassa settings are not part of the payment method, the settings in the payment method are ignored
-* Tested with 1-2-stable, 1.3 not tested yet
-* Redirect to omnikassa from checkout is a slight hack, as can be seen in the 'app/controllers/spree/checkout_controller_decorator.rb'
+* [v2-fix-candidate] Onmikassa settings are not part of the payment method, the settings in the payment method are ignored
+* [v2-fix-candidate] Tested with 1-2-stable, 1.3 not tested yet
+* [v2-fix-candidate] Redirect to omnikassa from checkout is a slight hack, as can be seen in the 'app/controllers/spree/checkout_controller_decorator.rb'
+
+V2 changes
+----------
+* Complete the order before redirecting to Omnikassa
+* Spree 1.3 compatible
+* Payment settings instead of general settings
+* Do not completed order while payment is pending (omnikassa code 60)  
+* Improve tests
 
 I found a bug!
 --------------
