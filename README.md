@@ -40,6 +40,7 @@ V2 changes
 * Payment settings instead of general settings
 * Do not completed order while payment is pending (omnikassa code 60)  
 * Improve tests
+* Use cancan to check user is authorized to see resource
 
 I found a bug!
 --------------
