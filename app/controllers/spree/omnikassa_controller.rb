@@ -38,24 +38,16 @@ module Spree
 
         case response_code
           when '00'
-            if payment.state != 'completed'
-              payment.send("complete!")
-            end
+            payment.send("complete!") if payment.state != 'completed'
             flash[:success] = t(:payment_success)
             redirect_to order_url(order)
-          
           when '60'
-            if payment.state != 'pending'
-              payment.pend!
-            end
+            payment.pend! if payment.state != 'pending'
             flash[:error] = t(:payment_pending)  
             redirect_to "/omnikassa/pending/#{payment.id}/"
-          
           else
-            if payment.state != 'failed'
-              payment.send("failure!")
-              flash[:error] = t(:payment_failed)
-            end
+            payment.send("failure!") if payment.state != 'failed'
+            flash[:error] = t(:payment_failed)
             redirect_to "/omnikassa/error/#{payment.id}/"
         end
       end
