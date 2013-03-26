@@ -35,10 +35,10 @@ Known issues
 
 V2 changes
 ----------
-* Complete the order before redirecting to Omnikassa
-* Spree 1.3 compatible
+* Complete the order before redirecting to Omnikassa ✓
+* Spree 1.3 compatible ✓
 * Payment settings instead of general settings
-* Do not completed order while payment is pending (omnikassa code 60)  
+* Do not completed order while payment is pending (omnikassa code 60) ✓
 * Improve tests
 * Use cancan to check user is authorized to see resource
 
