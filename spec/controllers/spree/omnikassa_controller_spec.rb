@@ -33,6 +33,7 @@ describe Spree::OmnikassaController do
 
   before :each do
     @payment = FactoryGirl.create :payment
+    controller.stub!(:authorize!)
   end
 
   describe 'GET start' do

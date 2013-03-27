@@ -70,7 +70,7 @@ module Spree
 
       def money
         Spree::Money.new(payment.amount).money
-       end
+      end
 
       def amount
         money.cents()
@@ -147,8 +147,9 @@ module Spree
       end
 
       def payment
-        # TODO: Check autorization
-        Spree::Payment.find(params[:payment_id])
+        pm = Spree::Payment.find(params[:payment_id])
+        authorize! :read, @pm
+        pm
       end
 
       # FLTRS
