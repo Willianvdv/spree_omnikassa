@@ -69,9 +69,8 @@ module Spree
       end
 
       def money
-        # TODO: Check if this is the right way to get the currency
-        ::Money.parse([payment.amount, Spree::Config[:currency]].join)
-      end
+        Spree::Money.new(payment.amount).money
+       end
 
       def amount
         money.cents()
