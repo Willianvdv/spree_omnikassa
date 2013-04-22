@@ -1,8 +1,6 @@
 module Spree
   class OmnikassaController < Spree::StoreController
-    #ssl_required
     skip_before_filter :verify_authenticity_token
-    #before_filter :valid_token
     before_filter :valid_seal, :except => [:start, :error]
 
     def start
