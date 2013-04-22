@@ -36,6 +36,20 @@ describe Spree::OmnikassaController do
     controller.stub!(:authorize!)
   end
 
+  describe 'GET restart' do
+    before :each do
+      @payment.send('started_processing!')
+      @payment.send("failure!")
+      @payment.save!
+    end
+
+    describe 'create a new payment' do
+      it 'a new payment is created' do
+        spree_get :restart, order_id: @payment.order.id
+      end
+    end
+  end
+
   describe 'GET start' do
     describe 'assignment' do
       it 'assigns a @data string' do
@@ -182,7 +196,6 @@ describe Spree::OmnikassaController do
           expect(@payment.state).to eq 'pending'
         end
       end
-
     end
   end
 end
