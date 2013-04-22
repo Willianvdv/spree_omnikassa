@@ -82,10 +82,6 @@ describe Spree::OmnikassaController do
         expect(@payment.state).to eq 'completed'
       end
 
-      it 'sets the order on the next state' do
-        expect(@payment.order.state).not_to eq 'payment'
-      end
-
       it 'redirects to the checkout' do
         u = "http://test.host/orders/#{@payment.order.number}"
         expect(response.response_code).to redirect_to(u)
