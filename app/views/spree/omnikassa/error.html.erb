@@ -2,6 +2,5 @@
   <h1><%= t(:payment_not_succeeded) %></h1>
   <p><%= t(:payment_error) %>.</p>
 
-  <%= @order %>
   <%= link_to t(:try_again), omnikassa_restart_path(order_id: @order.id), :class => 'btn button' %>
 </div>
