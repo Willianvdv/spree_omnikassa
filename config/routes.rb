@@ -5,6 +5,9 @@ Spree::Core::Engine.routes.draw do
   get '/omnikassa/error/:payment_id/',
       :to => 'omnikassa#error',
       :as => :omnikassa_error
+  get '/omnikassa/restart/:order_id/',
+      :to => 'omnikassa#restart',
+      :as => :omnikassa_restart
   post '/omnikassa/success/:payment_id/',
       :to => 'omnikassa#success',
       :as => :omnikassa_success
