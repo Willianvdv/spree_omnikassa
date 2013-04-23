@@ -1,10 +1,13 @@
 module Spree
   class OmnikassaController < Spree::StoreController
     skip_before_filter :verify_authenticity_token
-    before_filter :valid_seal, :except => [:start, :error]
+    before_filter :valid_seal, :except => [:start, :error, :restart]
 
     def restart
-
+      payment = order.payments.create(amount: order.outstanding_balance)
+      payment.payment_method = Spree::BillingIntegration::Omnikassa.first
+      payment.save!
+      redirect_to "/omnikassa/start/#{payment.id}/"
     end
 
     def start
@@ -60,6 +63,7 @@ module Spree
     end
 
     def error
+      @order = order
       # Error
     end
 
@@ -97,7 +101,13 @@ module Spree
       end
 
       def order
-        payment.order
+        if params[:order_id]
+          order = Spree::Order.find(params[:order_id])
+        else
+          order = payment.order 
+        end
+        authorize! :read, order
+        order
       end
 
       def secret
@@ -149,9 +159,9 @@ module Spree
       end
 
       def payment
-        pm = Spree::Payment.find(params[:payment_id])
-        authorize! :read, @pm
-        pm
+        payment = Spree::Payment.find(params[:payment_id])
+        authorize! :read, payment
+        payment
       end
 
       # FLTRS
