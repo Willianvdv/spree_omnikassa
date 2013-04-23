@@ -3,6 +3,10 @@ module Spree
     skip_before_filter :verify_authenticity_token
     before_filter :valid_seal, :except => [:start, :error]
 
+    def restart
+
+    end
+
     def start
       # Start an omnikassa transaction
       payment.send('started_processing!')
