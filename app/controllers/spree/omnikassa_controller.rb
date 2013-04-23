@@ -4,7 +4,9 @@ module Spree
     before_filter :valid_seal, :except => [:start, :error, :restart]
 
     def restart
+      # todo: specs
       payment = order.payments.create(amount: order.outstanding_balance)
+      # todo: better implementation
       payment.payment_method = Spree::BillingIntegration::Omnikassa.first
       payment.save!
       redirect_to "/omnikassa/start/#{payment.id}/"
@@ -90,16 +92,6 @@ module Spree
         Spree::Config[:omnikassa_merchant_id]
       end
 
-      def payment_token
-        token payment.id
-      end
-
-      def token s
-        # TODO: replace with a more secure implementation
-        a = "#{s}#{Rails.application.config.secret_token[0,10]}"
-        (Digest::SHA256.new << a).to_s()[0,10]
-      end
-
       def order
         if params[:order_id]
           order = Spree::Order.find(params[:order_id])
@@ -170,10 +162,6 @@ module Spree
           flash[:error] = "Invalid token"
           head :forbidden
         end
-      end
-
-      def has_valid_token?
-        params[:token] == omnikassa.payment_token
       end
 
       def valid_seal
