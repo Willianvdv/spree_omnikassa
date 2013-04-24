@@ -156,13 +156,6 @@ module Spree
       end
 
       # FLTRS
-      def valid_token
-        unless has_valid_token?
-          flash[:error] = "Invalid token"
-          head :forbidden
-        end
-      end
-
       def valid_seal
         unless has_valid_seal?
           flash[:error] = "Invalid seal"
