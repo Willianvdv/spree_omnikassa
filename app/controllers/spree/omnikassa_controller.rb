@@ -4,9 +4,8 @@ module Spree
     before_filter :valid_seal, :except => [:start, :error, :restart]
 
     def restart
-      # todo: specs
+      # todo: find out if there a more elegant way to create a payment
       payment = order.payments.create(amount: order.outstanding_balance)
-      # todo: better implementation
       payment.payment_method = Spree::BillingIntegration::Omnikassa.first
       payment.save!
       redirect_to "/omnikassa/start/#{payment.id}/"

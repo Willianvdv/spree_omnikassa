@@ -8,8 +8,10 @@ describe Spree::OmnikassaController do
   let(:order) { FactoryGirl.create :completed_order_with_totals } 
   let(:payment) { FactoryGirl.create :payment, order: order }
 
+
   before :each do
     controller.stub!(:authorize!)
+    Spree::BillingIntegration::Omnikassa.create! name: 'omnikassa'
   end
 
   describe 'GET restart' do
@@ -25,6 +27,14 @@ describe Spree::OmnikassaController do
 
       it 'a new payment is created' do
         expect(restarted_payment.state).to eq('checkout')  
+      end
+
+      it 'has omnikassa as payment method' do
+        expect(restarted_payment.payment_method.class).to eq(Spree::BillingIntegration::Omnikassa)  
+      end
+
+      it 'has the order outstanding amount as payment amount' do
+        expect(restarted_payment.amount).to eq(order.outstanding_balance)
       end
 
       it 'redirects to the omnikassa start page' do
@@ -56,6 +66,16 @@ describe Spree::OmnikassaController do
       spree_get :start, payment_id: payment.id
       payment.reload
       expect(payment.state).to eq('processing')
+    end
+  end
+
+  describe 'GET error' do
+    before :each do
+      spree_get :error, order_id: order.id
+    end
+
+    it 'assigns a @order' do
+      expect(assigns(:order)).to eq(order) 
     end
   end
 
@@ -183,7 +203,6 @@ describe Spree::OmnikassaController do
     end
   end
 end
-
 
 def _create_omnikassa_response d={}
   data = "amount=4575|" \
