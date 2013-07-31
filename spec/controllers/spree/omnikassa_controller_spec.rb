@@ -19,7 +19,7 @@ describe Spree::OmnikassaController do
       payment.send("started_processing!")
       payment.send("failure!")
       payment.save!
-      spree_get(:restart, order_id: order.id)
+      spree_get(:restart, order_id: order.id, token: order.token)
     end
 
     describe 'create a new payment' do
@@ -71,7 +71,7 @@ describe Spree::OmnikassaController do
 
   describe 'GET error' do
     before :each do
-      spree_get :error, order_id: order.id
+      spree_get :error, payment_id: payment.id, token: payment.order.token
     end
 
     it 'assigns a @order' do
@@ -126,7 +126,7 @@ describe Spree::OmnikassaController do
       end
 
       it 'redirects to the checkout' do
-        u = "http://test.host/omnikassa/pending/#{payment.id}/"
+        u = "http://test.host/omnikassa/pending/#{payment.id}/?token=#{payment.order.token}"
         expect(response.response_code).to redirect_to(u)
       end
     end
@@ -143,7 +143,7 @@ describe Spree::OmnikassaController do
       end
 
       it 'redirects to the omnikassa error action' do
-        u = "http://test.host/omnikassa/error/#{payment.id}/"
+        u = "http://test.host/omnikassa/error/#{payment.id}/?token=#{payment.order.token}"
         expect(response.response_code).to redirect_to(u)
       end
     end

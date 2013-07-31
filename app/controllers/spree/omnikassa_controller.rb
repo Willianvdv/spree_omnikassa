@@ -5,6 +5,10 @@ module Spree
 
     def restart
       # todo: find out if there a more elegant way to create a payment
+
+      order = Spree::Order.find(params[:order_id])
+      authorize! :read, order, params[:token]
+
       payment = order.payments.create(amount: order.outstanding_balance)
       payment.payment_method = Spree::BillingIntegration::Omnikassa.first
       payment.save!
@@ -50,11 +54,11 @@ module Spree
           when '60'
             payment.pend! if payment.state != 'pending'
             flash[:error] = t(:payment_pending)  
-            redirect_to "/omnikassa/pending/#{payment.id}/"
+            redirect_to "/omnikassa/pending/#{payment.id}/?token=#{order.token}"
           else
             payment.send("failure!") if payment.state != 'failed'
             flash[:error] = t(:payment_failed)
-            redirect_to "/omnikassa/error/#{payment.id}/"
+            redirect_to "/omnikassa/error/#{payment.id}/?token=#{order.token}"
         end
       end
     end
@@ -65,7 +69,6 @@ module Spree
 
     def error
       @order = order
-      # Error
     end
 
     private
