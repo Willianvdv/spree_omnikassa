@@ -92,13 +92,7 @@ module Spree
       end
 
       def order
-        if params[:order_id]
-          order = Spree::Order.find(params[:order_id])
-        else
-          order = payment.order 
-        end
-        authorize! :read, order
-        order
+        payment.order 
       end
 
       def secret
@@ -150,9 +144,9 @@ module Spree
       end
 
       def payment
-        payment = Spree::Payment.find(params[:payment_id])
-        authorize! :read, payment
-        payment
+        pm = Spree::Payment.find(params[:payment_id])
+        authorize! :read, pm.order, params[:token]
+        pm
       end
 
       # FLTRS

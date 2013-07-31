@@ -4,7 +4,8 @@ Spree::CheckoutController.class_eval do
       if is_omnikassa_payment?
         url_for :controller => 'omnikassa',
                 :action => 'start',
-                :payment_id => payment.id
+                :payment_id => payment.id,
+                :token => @order.token
       else
         super
       end
