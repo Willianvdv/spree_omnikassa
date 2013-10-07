@@ -5,13 +5,12 @@ describe Spree::OmnikassaController do
 
   subject { Spree::OmnikassaController }
 
-  let(:order) { FactoryGirl.create :completed_order_with_totals } 
-  let(:payment) { FactoryGirl.create :payment, order: order }
-
+  let!(:order) { FactoryGirl.create :completed_order_with_totals } 
+  let!(:payment) { FactoryGirl.create :payment, order: order }
+  let!(:omnikassa) { Spree::BillingIntegration::Omnikassa.create! name: 'omnikassa' }
 
   before :each do
     controller.stub(:authorize!)
-    Spree::BillingIntegration::Omnikassa.create! name: 'omnikassa'
   end
 
   describe 'GET restart' do
@@ -19,7 +18,10 @@ describe Spree::OmnikassaController do
       payment.send("started_processing!")
       payment.send("failure!")
       payment.save!
-      p spree_get(:restart, order_id: order.id, token: order.token)
+      spree_get(:restart, order_id: order.id, token: order.token)
+
+      payment.payment_method = omnikassa
+      payment.save!
     end
 
     describe 'create a new payment' do
