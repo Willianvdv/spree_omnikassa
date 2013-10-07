@@ -19,7 +19,7 @@ describe Spree::OmnikassaController do
       payment.send("started_processing!")
       payment.send("failure!")
       payment.save!
-      spree_get(:restart, order_id: order.id, token: order.token)
+      p spree_get(:restart, order_id: order.id, token: order.token)
     end
 
     describe 'create a new payment' do
