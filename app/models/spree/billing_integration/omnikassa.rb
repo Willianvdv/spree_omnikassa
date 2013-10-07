@@ -1,7 +1,7 @@
 module Spree
   class BillingIntegration::Omnikassa < BillingIntegration
-    attr_accessible :preferred_server,
-                    :preferred_test_mode
+    # attr_accessible :preferred_server,
+    #                 :preferred_test_mode
 
     # Show the confirm step (slightly hackish)
     def payment_profiles_supported?
