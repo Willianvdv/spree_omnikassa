@@ -7,7 +7,7 @@ Spree::CheckoutController.class_eval do
                 :payment_id => payment.id,
                 :token => @order.token
       else
-        super
+        spree.order_path(@order)
       end
     end
 
