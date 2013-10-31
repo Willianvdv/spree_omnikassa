@@ -10,7 +10,7 @@ describe Spree::OmnikassaController do
 
 
   before :each do
-    controller.stub!(:authorize!)
+    controller.stub(:authorize!)
     Spree::BillingIntegration::Omnikassa.create! name: 'omnikassa'
   end
 
