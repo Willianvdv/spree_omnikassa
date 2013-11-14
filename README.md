@@ -1,7 +1,7 @@
 Spree Omnikassa 
 ===============
 
-[![Build Status](https://travis-ci.org/oxpeck/spree_omnikassa.png?branch=master)](https://travis-ci.org/Willianvdv/spree_omnikassa)
+[![Build Status](https://travis-ci.org/Willianvdv/spree_omnikassa.png?branch=master)](https://travis-ci.org/Willianvdv/spree_omnikassa)
 [![Coverage Status](https://coveralls.io/repos/Willianvdv/spree_omnikassa/badge.png?branch=master)](https://coveralls.io/r/Willianvdv/spree_omnikassa?branch=master)
 
 Integrate Rabobank Omnikassa in your Spree commerce webshop
@@ -12,7 +12,7 @@ Using Spree Omnikassa
 Add spree_omnikassa to your Gemfile
 
 ```ruby
-gem 'spree_omnikassa', :git => 'git@github.com:oxpeck/spree_omnikassa.git'
+gem 'spree_omnikassa', :git => 'git@github.com:Willianvdv/spree_omnikassa.git'
 ```
 
 Update bundle
