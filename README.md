@@ -1,7 +1,8 @@
 Spree Omnikassa 
 ===============
 
-[![Build Status](https://travis-ci.org/oxpeck/spree_omnikassa.png?branch=master)](https://travis-ci.org/oxpeck/spree_omnikassa)
+[![Build Status](https://travis-ci.org/oxpeck/spree_omnikassa.png?branch=master)](https://travis-ci.org/Willianvdv/spree_omnikassa)
+[![Coverage Status](https://coveralls.io/repos/Willianvdv/spree_omnikassa/badge.png?branch=master)](https://coveralls.io/r/Willianvdv/spree_omnikassa?branch=master)
 
 Integrate Rabobank Omnikassa in your Spree commerce webshop
 
