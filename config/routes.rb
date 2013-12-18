@@ -1,4 +1,5 @@
-Spree::Core::Engine.routes.draw do
+Spree::Core::Engine.add_routes do
+  
   get '/omnikassa/start/:payment_id/',
       :to => 'omnikassa#start',
       :as => :omnikassa_start

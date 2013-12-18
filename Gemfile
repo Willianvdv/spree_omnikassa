@@ -1,6 +1,10 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
-gem 'spree', :branch => '1-3-stable', :git => 'git://github.com/spree/spree.git'
+# Provides basic authentication functionality for testing parts of your engine
+#gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-1-stable'
 gem 'coveralls', require: false
+
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-1-stable'
+gem 'spree', github: 'spree/spree', branch: '2-1-stable'
 
 gemspec

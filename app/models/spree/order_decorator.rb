@@ -1,5 +1,3 @@
-require 'action_controller'
-
 Spree::Order.class_eval do
   state_machine.after_transition :from => :confirm,
                                  :do => :redirect_to_omnikassa_payment
