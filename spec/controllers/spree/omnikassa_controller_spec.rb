@@ -23,7 +23,7 @@ describe Spree::OmnikassaController do
     end
 
     describe 'create a new payment' do
-      let(:restarted_payment) { order.payments.all.last }
+      let(:restarted_payment) { order.payments.last }
 
       it 'a new payment is created' do
         expect(restarted_payment.state).to eq('checkout')  
