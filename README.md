@@ -12,7 +12,7 @@ Using Spree Omnikassa
 Add spree_omnikassa to your Gemfile
 
 ```ruby
-gem 'spree_omnikassa', :git => 'git@github.com:Willianvdv/spree_omnikassa.git'
+gem 'spree_omnikassa', github: 'Willianvdv/spree_omnikassa'
 ```
 
 Update bundle
