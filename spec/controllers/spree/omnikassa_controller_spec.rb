@@ -8,7 +8,6 @@ describe Spree::OmnikassaController do
   let(:order) { FactoryGirl.create :completed_order_with_totals } 
   let(:payment) { FactoryGirl.create :payment, order: order }
 
-
   before :each do
     controller.stub(:authorize!)
     Spree::BillingIntegration::Omnikassa.create! name: 'omnikassa'
@@ -23,7 +22,10 @@ describe Spree::OmnikassaController do
     end
 
     describe 'create a new payment' do
-      let(:restarted_payment) { order.payments.last }
+      let(:restarted_payment) { 
+        order.reload
+        order.payments.last 
+      }
 
       it 'a new payment is created' do
         expect(restarted_payment.state).to eq('checkout')  
