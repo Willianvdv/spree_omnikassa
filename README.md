@@ -21,7 +21,7 @@ Update bundle
 
 Run the omnikassa migrations
 
-	$ bundle exec rails g spree_omnikasssa:install
+	$ bundle exec rails g spree_omnikassa:install
 	$ bundle exec rake db:migrate
 
 Update Omnikassa settings (or leave them as they are for testing)
