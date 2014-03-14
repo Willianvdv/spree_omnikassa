@@ -27,6 +27,12 @@ Run the omnikassa migrations
 Update Omnikassa settings (or leave them as they are for testing)
 
 	http://0.0.0.0:3000/admin/omnikassa_settings/edit
+	
+Register the provider in your settings. In `config/initializers/spree.rb`:
+
+```ruby
+Rails.application.config.spree.payment_methods << Spree::BillingIntegration::Omnikassa
+```
 
 Create a payment method with `Spree::BillingIntegration::Omnikassa` as provider.
 
