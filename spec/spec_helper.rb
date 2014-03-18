@@ -101,13 +101,11 @@ end
 shared_context 'omnikassa' do
   before do
     reset_spree_preferences do |config|
-      config.payment_methods << Spree::BillingIntegration::Omnikassa
       config.currency = "EUR"
-      config.omnikassa_url = 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
-      config.omnikassa_merchant_id = '002020000000001'
-      config.omnikassa_secret_key = '002020000000001_KEY1'
-      config.omnikassa_key_version = '1'
+      config.omnikassa_merchant_id = '1337'
       config.omnikassa_transaction_reference_prefix = 'PREFIX'
+      config.omnikassa_key_version = '7'
+      config.omnikassa_secret_key = 'SECRET'
     end
   end
 end

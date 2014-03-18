@@ -11,6 +11,17 @@ describe "Checkout", js: true do
 
   let!(:omnikassa_payment_method) { create(:omnikassa_payment_method) }
 
+  before do
+    reset_spree_preferences do |config|
+      config.currency = "EUR"
+      config.omnikassa_url = 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
+      config.omnikassa_merchant_id = '002020000000001'
+      config.omnikassa_secret_key = '002020000000001_KEY1'
+      config.omnikassa_key_version = '1'
+      config.omnikassa_transaction_reference_prefix = 'PREFIX'
+    end
+  end
+
   describe 'pay with omnikassa' do
     before do
       order = OrderWalkthrough.up_to(:delivery)
@@ -24,15 +35,10 @@ describe "Checkout", js: true do
 
     it 'redirects to omnikassa' do
       visit spree.checkout_state_path(:payment)
-      #select "United States of America", :from => "#{address}_country_id"
       choose('Omnikassa')
       click_button "Save and Continue"
 
       sleep 10
     end
   end
-
 end
-
-
-#order[payments_attributes][][payment_method_id]
