@@ -18,7 +18,8 @@ describe "Checkout", js: true do
       config.omnikassa_merchant_id = '002020000000001'
       config.omnikassa_secret_key = '002020000000001_KEY1'
       config.omnikassa_key_version = '1'
-      config.omnikassa_transaction_reference_prefix = 'PREFIX'
+      random_prefix = (0...8).map { ('a'..'z').to_a[rand(26)] }.join
+      config.omnikassa_transaction_reference_prefix = "SPROMNI#{random_prefix}"
     end
   end
 
@@ -34,11 +35,35 @@ describe "Checkout", js: true do
     end
 
     it 'redirects to omnikassa' do
-      visit spree.checkout_state_path(:payment)
-      choose('Omnikassa')
-      click_button "Save and Continue"
+      goto_omnikassa
 
-      sleep 10
+      # TODO: check: Is this omnikassa?
+    end
+
+    it 'success after omnikassa' do
+      goto_omnikassa
+      do_omnikassa_ideal_payment #TODO: Shall I mock this?
+
+      # TODO: check: Is this the success return page?
     end
   end
+end
+
+
+def goto_omnikassa
+  visit spree.checkout_state_path(:payment)
+  choose('Omnikassa')
+  click_button "Save and Continue"
+  click_button "Place"
+end
+
+def do_omnikassa_ideal_payment
+  first('.paymentmeanbutton:nth-child(2) > a').click
+  click_button "Akkoord"
+  click_button "Bevestig de transactie"
+  click_link "Verder"
+
+  # Accept SSL warning
+  a = page.driver.browser.switch_to.alert
+  a.accept
 end
