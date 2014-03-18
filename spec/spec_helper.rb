@@ -32,9 +32,20 @@ require 'spree/testing_support/preferences'
 require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/url_helpers'
+require 'spree/testing_support/order_walkthrough'
 
 # Requires factories defined in lib/spree_omnikassa/factories.rb
 require 'spree_omnikassa/factories'
+
+if ENV['WEBDRIVER'] == 'accessible'
+  require 'capybara/accessible'
+  Capybara.javascript_driver = :accessible
+elsif ENV['WEBDRIVER'] == 'selenium'
+  Capybara.javascript_driver = :selenium
+else
+  require 'capybara/poltergeist'
+  Capybara.javascript_driver = :poltergeist
+end
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
@@ -83,19 +94,20 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests
-  
+
   config.fail_fast = ENV['FAIL_FAST'] || false
 end
 
 shared_context 'omnikassa' do
   before do
     reset_spree_preferences do |config|
+      config.payment_methods << Spree::BillingIntegration::Omnikassa
       config.currency = "EUR"
-      config.omnikassa_merchant_id = '1337'
+      config.omnikassa_url = 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
+      config.omnikassa_merchant_id = '002020000000001'
+      config.omnikassa_secret_key = '002020000000001_KEY1'
+      config.omnikassa_key_version = '1'
       config.omnikassa_transaction_reference_prefix = 'PREFIX'
-      config.omnikassa_key_version = '7'
-      config.omnikassa_secret_key = 'SECRET'     
     end
   end
 end
-    
