@@ -12,6 +12,9 @@ describe "Checkout", js: true do
   let!(:omnikassa_payment_method) { create(:omnikassa_payment_method) }
 
   before do
+    page.driver.headers = { "Accept-Language" => "nl-nl" }
+    stock_location.stock_items.update_all(count_on_hand: 1)
+
     reset_spree_preferences do |config|
       config.currency = "EUR"
       config.omnikassa_url = 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
@@ -36,25 +39,23 @@ describe "Checkout", js: true do
 
     it 'redirects to omnikassa' do
       goto_omnikassa
-
-      # TODO: check: Is this omnikassa?
+      expect(current_path).to match 'payment/selectpaymentmethod'
     end
 
     it 'success after omnikassa' do
       goto_omnikassa
-      do_omnikassa_ideal_payment #TODO: Shall I mock this?
-
-      # TODO: check: Is this the success return page?
+      do_omnikassa_ideal_payment
+      expect(current_path).to start_with '/orders/R' # Don't know the current order number
     end
   end
 end
-
 
 def goto_omnikassa
   visit spree.checkout_state_path(:payment)
   choose('Omnikassa')
   click_button "Save and Continue"
   click_button "Place"
+  sleep 3 if Capybara.javascript_driver == :poltergeist # Wait for redirect
 end
 
 def do_omnikassa_ideal_payment
@@ -62,8 +63,11 @@ def do_omnikassa_ideal_payment
   click_button "Akkoord"
   click_button "Bevestig de transactie"
   click_link "Verder"
+  sleep 3 if Capybara.javascript_driver == :poltergeist  # Wait for redirect
 
-  # Accept SSL warning
-  a = page.driver.browser.switch_to.alert
-  a.accept
+  if Capybara.javascript_driver == :selenium
+    # Accept SSL warning
+    a = page.driver.browser.switch_to.alert
+    a.accept
+  end
 end

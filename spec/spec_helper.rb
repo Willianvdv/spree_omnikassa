@@ -47,6 +47,13 @@ else
   Capybara.javascript_driver = :poltergeist
 end
 
+Capybara.register_driver :poltergeist do |app|
+    options = {
+        :js_errors => false,
+    }
+    Capybara::Poltergeist::Driver.new(app, options)
+end
+
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include Devise::TestHelpers, :type => :controller

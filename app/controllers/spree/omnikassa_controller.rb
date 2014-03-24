@@ -50,10 +50,10 @@ module Spree
           when '00'
             payment.send("complete!") if payment.state != 'completed'
             flash[:success] = t(:payment_success)
-            redirect_to order_url(order)
+            redirect_to order_url(order, { token: order.token })
           when '60'
             payment.pend! if payment.state != 'pending'
-            flash[:error] = t(:payment_pending)  
+            flash[:error] = t(:payment_pending)
             redirect_to "/omnikassa/pending/#{payment.id}/?token=#{order.token}"
           else
             payment.send("failure!") if payment.state != 'failed'
@@ -95,7 +95,7 @@ module Spree
       end
 
       def order
-        payment.order 
+        payment.order
       end
 
       def secret
@@ -112,21 +112,21 @@ module Spree
       end
 
       def payment_data
-        {:amount => amount,
-         :currencyCode => currency_code,
-         :merchantId => merchant_id,
-         :normalReturnUrl => normal_return_url,
-         :automaticResponseUrl => automatic_response_url,
-         :transactionReference => transaction_reference,
-         :keyVersion => key_version,}
+        { :amount => amount,
+          :currencyCode => currency_code,
+          :merchantId => merchant_id,
+          :normalReturnUrl => normal_return_url,
+          :automaticResponseUrl => automatic_response_url,
+          :transactionReference => transaction_reference,
+          :keyVersion => key_version, }
       end
 
       def normal_return_url
-        "#{uri}/omnikassa/success/#{payment.id}/"
+        "#{uri}/omnikassa/success/#{payment.id}/?token=#{order.token}"
       end
 
       def automatic_response_url
-        "#{uri}/omnikassa/success/automatic/#{payment.id}/"
+        "#{uri}/omnikassa/success/automatic/#{payment.id}/?token=#{order.token}"
       end
 
       def transaction_reference_prefix
