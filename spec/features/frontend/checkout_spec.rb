@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe "Checkout", js: true do
+
+
+
   let!(:country) { create(:country, :states_required => true) }
   let!(:state) { create(:state, :country => country) }
   let!(:shipping_method) { create(:shipping_method) }
@@ -13,8 +16,8 @@ describe "Checkout", js: true do
 
   before do
     page.driver.headers = { "Accept-Language" => "nl-nl" }
-    stock_location.stock_items.update_all(count_on_hand: 1)
 
+    stock_location.stock_items.update_all(count_on_hand: 1)
     reset_spree_preferences do |config|
       config.currency = "EUR"
       config.omnikassa_url = 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
@@ -27,8 +30,10 @@ describe "Checkout", js: true do
   end
 
   describe 'pay with omnikassa' do
+    let!(:shipping_method) { create :shipping_method }
+    let!(:order) { OrderWalkthrough.up_to(:delivery) }
+
     before do
-      order = OrderWalkthrough.up_to(:delivery)
       user = create(:user)
       order.user = user
       order.update!
