@@ -5,12 +5,16 @@ describe Spree::OmnikassaController do
 
   subject { Spree::OmnikassaController }
 
-  let(:order) { FactoryGirl.create :completed_order_with_totals } 
-  let(:payment) { FactoryGirl.create :payment, order: order }
+  let!(:order) { FactoryGirl.create :completed_order_with_totals }
+  let!(:payment) { FactoryGirl.create :payment, order: order }
+  let(:token) { '123456790' }
 
-  before :each do
+  before do
     controller.stub(:authorize!)
     Spree::BillingIntegration::Omnikassa.create! name: 'omnikassa'
+    Spree::Payment.stub(:find).and_return payment
+    payment.stub(:order).and_return order
+    order.stub(:token).and_return(token)
   end
 
   describe 'GET restart' do
@@ -22,17 +26,17 @@ describe Spree::OmnikassaController do
     end
 
     describe 'create a new payment' do
-      let(:restarted_payment) { 
+      let(:restarted_payment) {
         order.reload
-        order.payments.last 
+        order.payments.last
       }
 
       it 'a new payment is created' do
-        expect(restarted_payment.state).to eq('checkout')  
+        expect(restarted_payment.state).to eq('checkout')
       end
 
       it 'has omnikassa as payment method' do
-        expect(restarted_payment.payment_method.class).to eq(Spree::BillingIntegration::Omnikassa)  
+        expect(restarted_payment.payment_method.class).to eq(Spree::BillingIntegration::Omnikassa)
       end
 
       it 'has the order outstanding amount as payment amount' do
@@ -50,12 +54,12 @@ describe Spree::OmnikassaController do
     describe 'assignment' do
       it 'assigns a @data string' do
         spree_get :start, payment_id: payment.id
-        assigns(:data).should == 'amount=4575|currencyCode=978|merchantId=1337|normalReturnUrl=http://test.host/omnikassa/success/1/|automaticResponseUrl=http://test.host/omnikassa/success/automatic/1/|transactionReference=PREFIX11|keyVersion=7'
+        assigns(:data).should == "amount=4575|currencyCode=978|merchantId=1337|normalReturnUrl=http://test.host/omnikassa/success/1/?token=#{token}|automaticResponseUrl=http://test.host/omnikassa/success/automatic/1/?token=#{token}|transactionReference=PREFIX11|keyVersion=7"
       end
 
       it 'assigns a @seal' do
         spree_get :start, payment_id: payment.id
-        assigns(:seal).should == 'be356b07401bd7aa891897ae649a6af790ac940d8fa698407a84aac4678b63cf'
+        assigns(:seal).should == 'fc1da0e684ff56716aed9f38b3fc08f581fc6541f496706e7c246b0a6ad463d4'
       end
 
       it 'assigns a @url' do
@@ -73,11 +77,11 @@ describe Spree::OmnikassaController do
 
   describe 'GET error' do
     before :each do
-      spree_get :error, payment_id: payment.id, token: payment.order.token
+      spree_get :error, payment_id: payment.id, token: token
     end
 
     it 'assigns a @order' do
-      expect(assigns(:order)).to eq(order) 
+      expect(assigns(:order)).to eq(order)
     end
   end
 
@@ -107,7 +111,7 @@ describe Spree::OmnikassaController do
       end
 
       it 'redirects to the checkout' do
-        u = "http://test.host/orders/#{payment.order.number}"
+        u = "http://test.host/orders/#{payment.order.number}?token=#{token}"
         expect(response.response_code).to redirect_to(u)
       end
     end
@@ -128,7 +132,7 @@ describe Spree::OmnikassaController do
       end
 
       it 'redirects to the checkout' do
-        u = "http://test.host/omnikassa/pending/#{payment.id}/?token=#{payment.order.token}"
+        u = "http://test.host/omnikassa/pending/#{payment.id}/?token=#{token}"
         expect(response.response_code).to redirect_to(u)
       end
     end
@@ -145,7 +149,7 @@ describe Spree::OmnikassaController do
       end
 
       it 'redirects to the omnikassa error action' do
-        u = "http://test.host/omnikassa/error/#{payment.id}/?token=#{payment.order.token}"
+        u = "http://test.host/omnikassa/error/#{payment.id}/?token=#{token}"
         expect(response.response_code).to redirect_to(u)
       end
     end

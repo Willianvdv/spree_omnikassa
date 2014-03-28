@@ -32,9 +32,27 @@ require 'spree/testing_support/preferences'
 require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/url_helpers'
+require 'spree/testing_support/order_walkthrough'
 
 # Requires factories defined in lib/spree_omnikassa/factories.rb
 require 'spree_omnikassa/factories'
+
+if ENV['WEBDRIVER'] == 'accessible'
+  require 'capybara/accessible'
+  Capybara.javascript_driver = :accessible
+elsif ENV['WEBDRIVER'] == 'selenium'
+  Capybara.javascript_driver = :selenium
+else
+  require 'capybara/poltergeist'
+  Capybara.javascript_driver = :poltergeist
+end
+
+Capybara.register_driver :poltergeist do |app|
+    options = {
+        :js_errors => false,
+    }
+    Capybara::Poltergeist::Driver.new(app, options)
+end
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
@@ -83,7 +101,7 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests
-  
+
   config.fail_fast = ENV['FAIL_FAST'] || false
 end
 
@@ -94,8 +112,7 @@ shared_context 'omnikassa' do
       config.omnikassa_merchant_id = '1337'
       config.omnikassa_transaction_reference_prefix = 'PREFIX'
       config.omnikassa_key_version = '7'
-      config.omnikassa_secret_key = 'SECRET'     
+      config.omnikassa_secret_key = 'SECRET'
     end
   end
 end
-    
