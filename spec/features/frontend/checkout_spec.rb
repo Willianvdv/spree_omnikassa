@@ -1,23 +1,11 @@
 require 'spec_helper'
 
 describe "Checkout", js: true do
-
-
-
-  let!(:country) { create(:country, :states_required => true) }
-  let!(:state) { create(:state, :country => country) }
-  let!(:shipping_method) { create(:shipping_method) }
-  let!(:stock_location) { create(:stock_location) }
-  let!(:mug) { create(:product, :name => "RoR Mug") }
-  let!(:payment_method) { create(:check_payment_method) }
-  let!(:zone) { create(:zone) }
-
   let!(:omnikassa_payment_method) { create(:omnikassa_payment_method) }
 
   before do
-    page.driver.headers = { "Accept-Language" => "nl-nl" }
+    #page.driver.headers = { "Accept-Language" => "nl-nl" } # We want the dutch omnikassa
 
-    stock_location.stock_items.update_all(count_on_hand: 1)
     reset_spree_preferences do |config|
       config.currency = "EUR"
       config.omnikassa_url = 'https://payment-webinit.simu.omnikassa.rabobank.nl/paymentServlet'
@@ -30,7 +18,6 @@ describe "Checkout", js: true do
   end
 
   describe 'pay with omnikassa' do
-    let!(:shipping_method) { create :shipping_method }
     let!(:order) { OrderWalkthrough.up_to(:delivery) }
 
     before do
@@ -60,7 +47,7 @@ def goto_omnikassa
   choose('Omnikassa')
   click_button "Save and Continue"
   click_button "Place"
-  sleep 3 if Capybara.javascript_driver == :poltergeist # Wait for redirect
+  sleep 3 if Capybara.javascript_driver != :selenium # Wait for redirect
 end
 
 def do_omnikassa_ideal_payment
@@ -68,7 +55,7 @@ def do_omnikassa_ideal_payment
   click_button "Akkoord"
   click_button "Bevestig de transactie"
   click_link "Verder"
-  sleep 3 if Capybara.javascript_driver == :poltergeist  # Wait for redirect
+  sleep 3 if Capybara.javascript_driver != :selenium  # Wait for redirect
 
   if Capybara.javascript_driver == :selenium
     # Accept SSL warning
