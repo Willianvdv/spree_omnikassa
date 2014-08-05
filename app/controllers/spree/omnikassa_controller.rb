@@ -12,12 +12,13 @@ module Spree
       payment = order.payments.create(amount: order.outstanding_balance)
       payment.payment_method = Spree::BillingIntegration::Omnikassa.first
       payment.save!
+
       redirect_to "/omnikassa/start/#{payment.id}/"
     end
 
     def start
       # Start an omnikassa transaction
-      payment.send('started_processing!')
+      payment.pend!
       @data = data_string
       @seal = seal @data
       @url = Spree::Config[:omnikassa_url]

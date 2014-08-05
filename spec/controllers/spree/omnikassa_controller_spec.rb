@@ -71,7 +71,7 @@ describe Spree::OmnikassaController do
     it 'sets the state to processing' do
       spree_get :start, payment_id: payment.id
       payment.reload
-      expect(payment.state).to eq('processing')
+      expect(payment.state).to eq('pending')
     end
   end
 
