@@ -48,10 +48,7 @@ else
 end
 
 Capybara.register_driver :poltergeist do |app|
-    options = {
-        :js_errors => false,
-    }
-    Capybara::Poltergeist::Driver.new(app, options)
+  Capybara::Poltergeist::Driver.new(app, { js_errors: false })
 end
 
 RSpec.configure do |config|

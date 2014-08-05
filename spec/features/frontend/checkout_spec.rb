@@ -52,9 +52,11 @@ end
 
 def do_omnikassa_ideal_payment
   first('.paymentmeanbutton:nth-child(2) > a').click
-  click_button "Akkoord"
-  click_button "Bevestig de transactie"
-  click_link "Verder"
+
+  click_button "Confirm"
+  click_button "Confirm Transaction"
+  click_link "Continue"
+
   sleep 3 if Capybara.javascript_driver != :selenium  # Wait for redirect
 
   if Capybara.javascript_driver == :selenium
