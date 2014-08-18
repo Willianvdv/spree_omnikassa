@@ -1,81 +1,14 @@
 module Spree
-  module OmnikassaHelper
-    # TODO: Make a class instead of a module
-
-    private
-
-    def payment_data
-      { :amount => amount,
-        :currencyCode => currency_code,
-        :merchantId => merchant_id,
-        :normalReturnUrl => normal_return_url,
-        :automaticResponseUrl => automatic_response_url,
-        :transactionReference => transaction_reference,
-        :keyVersion => key_version, }
-    end
-
-    def uri
-      "#{request.protocol}#{request.host_with_port}"
-    end
-
-    def money
-      Spree::Money.new(payment.amount).money
-    end
-
-    def amount
-      money.cents()
-    end
-
-    def currency_code
-      money.currency.iso_numeric
-    end
-
-    def merchant_id
-      Spree::Config[:omnikassa_merchant_id]
-    end
-
-    def secret
-      Spree::Config[:omnikassa_secret_key]
-    end
-
-    def seal string_to_be_sealed
-      (Digest::SHA256.new << "#{string_to_be_sealed}#{secret}").to_s
-    end
-
-    def data_string
-      payment_data.map{|k,v| "#{k}=#{v}"}.join('|')
-    end
-
-    def normal_return_url
-      "#{uri}/omnikassa/success/#{payment.id}/?token=#{order.token}"
-    end
-
-    def automatic_response_url
-      "#{uri}/omnikassa/success/automatic/#{payment.id}/?token=#{order.token}"
-    end
-
-    def transaction_reference_prefix
-      Spree::Config[:omnikassa_transaction_reference_prefix]
-    end
-
-    def transaction_reference
-      "#{transaction_reference_prefix}#{order.id}#{payment.id}"
-    end
-
-    def key_version
-      Spree::Config[:omnikassa_key_version]
-    end
-  end
-
   class OmnikassaController < Spree::StoreController
-    include OmnikassaHelper
-
     # Omnikassa does a post without knowing our authenticity token
     skip_before_filter :verify_authenticity_token
 
     around_filter :in_transaction, only: :success
+
     before_filter :valid_seal, except: [:start, :error, :restart]
-    before_filter :load_payment, only: :success
+    before_filter :load_payment, only: [:start, :success]
+    before_filter :load_processor, only: [:start]
+    before_filter :load_omnikassa_payment, only: :start
     before_filter :load_order, only: :success
 
     def restart
@@ -92,10 +25,10 @@ module Spree
     end
 
     def start
-      payment.pend!
+      @payment.pend!
 
-      @data = data_string
-      @seal = seal @data
+      @data = @processor.data_string
+      @seal = @processor.seal @data
       @url = Spree::Config[:omnikassa_url]
     end
 
@@ -157,8 +90,16 @@ module Spree
       @payment = payment
     end
 
+    def load_omnikassa_payment
+      @omnikassa_payment = @payment.omnikassa_payments.last # TODO: Not thread safe
+    end
+
     def load_order
       @order = @payment.order
+    end
+
+    def load_processor
+      @processor = Spree::OmnikassaPayment.processor(@payment)
     end
 
     def order
@@ -179,7 +120,7 @@ module Spree
     end
 
     def valid_seal?
-      seal(params[:Data]) == params[:Seal]
+      Spree::OmnikassaProcessor.seal(params[:Data]) == params[:Seal]
     end
   end
 end

@@ -105,6 +105,7 @@ end
 shared_context 'omnikassa' do
   before do
     reset_spree_preferences do |config|
+      config.site_url = 'test.host'
       config.currency = "EUR"
       config.omnikassa_merchant_id = '1337'
       config.omnikassa_transaction_reference_prefix = 'PREFIX'
