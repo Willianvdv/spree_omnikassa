@@ -2,7 +2,4 @@ script:
   - bundle exec rake test_app
   - bundle exec rspec spec
 rvm:
-  - 1.9.3p547
   - 2.1.2
-  
-bundler_args: --without development debug
