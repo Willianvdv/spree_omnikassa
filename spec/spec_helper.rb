@@ -52,6 +52,8 @@ Capybara.register_driver :poltergeist do |app|
 end
 
 RSpec.configure do |config|
+  config.render_views
+
   config.include FactoryGirl::Syntax::Methods
   config.include Devise::TestHelpers, type: :controller
 

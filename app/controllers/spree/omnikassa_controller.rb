@@ -13,7 +13,7 @@ module Spree
 
     def restart
       order = Spree::Order.find params[:order_id]
-      authorize! :read, order, params[:token]
+      #authorize! :read, order, params[:token]
 
       # This will create a new payment. Maybe it would be easier to copy the
       # previous omnikassa payment
@@ -108,7 +108,7 @@ module Spree
 
     def payment
       payment = Spree::Payment.find params[:payment_id]
-      authorize! :read, payment.order, params[:token]
+      #authorize! :read, payment.order, params[:token]
       payment
     end
 
