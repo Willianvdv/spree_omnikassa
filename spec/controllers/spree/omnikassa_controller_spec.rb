@@ -44,8 +44,8 @@ describe Spree::OmnikassaController do
       end
 
       it 'redirects to the omnikassa start page' do
-        u = "http://test.host/omnikassa/start/#{restarted_payment.id}/"
-        expect(response.response_code).to redirect_to(u)
+        url = "http://test.host/omnikassa/start/#{restarted_payment.id}"
+        expect(response.response_code).to redirect_to(url)
       end
     end
   end
@@ -132,7 +132,7 @@ describe Spree::OmnikassaController do
       end
 
       it 'redirects to the checkout' do
-        u = "http://test.host/omnikassa/pending/#{payment.id}/?token=#{token}"
+        u = "http://test.host/omnikassa/pending/#{payment.id}?token=#{token}"
         expect(response.response_code).to redirect_to(u)
       end
     end
@@ -149,7 +149,7 @@ describe Spree::OmnikassaController do
       end
 
       it 'redirects to the omnikassa error action' do
-        u = "http://test.host/omnikassa/error/#{payment.id}/?token=#{token}"
+        u = "http://test.host/omnikassa/error/#{payment.id}?token=#{token}"
         expect(response.response_code).to redirect_to(u)
       end
     end
@@ -163,7 +163,7 @@ describe Spree::OmnikassaController do
 
           # Automatic success call
           data, seal = _create_omnikassa_response
-          spree_post :success_automatic, payment_id: payment.id, Data: data, Seal: seal
+          spree_post :success, payment_id: payment.id, Data: data, Seal: seal
         end
 
         it 'sets the payment state to completed' do
@@ -181,7 +181,7 @@ describe Spree::OmnikassaController do
 
           # Automatic success call
           data, seal = _create_omnikassa_response({:response_code => '99'})
-          spree_post :success_automatic, payment_id: payment.id, Data: data, Seal: seal
+          spree_post :success, payment_id: payment.id, Data: data, Seal: seal
         end
 
         it 'sets the payment state to failed' do
@@ -198,7 +198,7 @@ describe Spree::OmnikassaController do
 
           # Automatic success call
           data, seal = _create_omnikassa_response({:response_code => '60'})
-          spree_post :success_automatic, payment_id: payment.id, Data: data, Seal: seal
+          spree_post :success, payment_id: payment.id, Data: data, Seal: seal
         end
 
         it 'sets the payment state to pending' do

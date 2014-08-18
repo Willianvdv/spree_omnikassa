@@ -12,4 +12,8 @@ group :test do
   gem 'poltergeist', '1.5.0'
 end
 
+group :development do
+  gem 'selenium-webdriver', require: false
+end
+
 gemspec
