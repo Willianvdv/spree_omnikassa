@@ -12,6 +12,7 @@ group :test do
 end
 
 group :development, :test do
+  gem 'sprockets-rails', :require => 'sprockets/railtie'
   gem 'capybara' #, '~> 2.1'
   gem 'selenium-webdriver', require: false
 end
