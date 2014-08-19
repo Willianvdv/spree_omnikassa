@@ -46,15 +46,15 @@ module Spree
 
     def uri
       # TODO: Fix protocol
-      "http://#{Spree::Config['site_url']}"
+      "http://#{Spree::Store.current.url}"
     end
 
     def normal_return_url
-      "#{uri}/omnikassa/success/#{@payment.id}/?token=#{@payment.order.token}"
+      "#{uri}/omnikassa/success/#{@payment.id}/?token=#{@payment.order.guest_token}"
     end
 
     def automatic_response_url
-      "#{uri}/omnikassa/success/automatic/#{@payment.id}/?token=#{@payment.order.token}"
+      "#{uri}/omnikassa/success/automatic/#{@payment.id}/?token=#{@payment.order.guest_token}"
     end
 
     def transaction_reference_prefix

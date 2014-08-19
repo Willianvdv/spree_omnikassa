@@ -14,7 +14,7 @@ describe Spree::OmnikassaController do
     Spree::BillingIntegration::Omnikassa.create! name: 'omnikassa'
     Spree::Payment.stub(:find).and_return payment
     payment.stub(:order).and_return order
-    order.stub(:token).and_return(token)
+    order.stub(:guest_token).and_return(token)
   end
 
   describe 'GET restart' do
@@ -22,7 +22,7 @@ describe Spree::OmnikassaController do
       payment.send("started_processing!")
       payment.send("failure!")
       payment.save!
-      spree_get(:restart, order_id: order.id, token: order.token)
+      spree_get(:restart, order_id: order.id, token: order.guest_token)
     end
 
     describe 'create a new payment' do

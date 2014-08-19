@@ -6,7 +6,7 @@ Spree::CheckoutController.class_eval do
       url_for :controller => 'omnikassa',
               :action => 'start',
               :payment_id => payment.id,
-              :token => @order.token
+              :token => @order.guest_token
     else
       # This is the original completion route
       spree.order_path(@order)
