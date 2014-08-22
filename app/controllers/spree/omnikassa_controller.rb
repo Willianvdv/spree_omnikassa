@@ -54,17 +54,17 @@ module Spree
         when '00' # Payment is completed
           @payment.send("complete!") if payment.state != 'completed'
           flash[:success] = t(:payment_success)
-          order_url(@order, { token: order.token })
+          order_url(@order, { token: order.guest_token })
 
         when '60' # Payment is pending (omni received this state from the bank)
           @payment.pend! if payment.state != 'pending'
           flash[:error] = t(:payment_pending)
-          omnikassa_pending_url(@payment.id, token: @order.token)
+          omnikassa_pending_url(@payment.id, token: @order.guest_token)
 
         else # All other states are failures
           @payment.send("failure!") if payment.state != 'failed'
           flash[:error] = t(:payment_failed)
-          omnikassa_error_url(@payment.id, token: @order.token)
+          omnikassa_error_url(@payment.id, token: @order.guest_token)
         end
     end
 

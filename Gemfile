@@ -1,8 +1,9 @@
 source 'https://rubygems.org'
 
 gem 'coveralls', require: false
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-2-stable'
-gem 'spree', github: 'spree/spree', branch: '2-2-stable'
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-3-stable'
+gem 'spree', github: 'spree/spree', branch: '2-3-stable'
+gem 'sass-rails', github: 'rails/sass-rails'
 
 group :test do
   #gem 'pg'
@@ -12,7 +13,6 @@ group :test do
 end
 
 group :development, :test do
-  gem 'sprockets-rails', :require => 'sprockets/railtie'
   gem 'capybara' #, '~> 2.1'
   gem 'selenium-webdriver', require: false
 end

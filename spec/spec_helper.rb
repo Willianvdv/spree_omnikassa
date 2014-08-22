@@ -97,6 +97,7 @@ RSpec.configure do |config|
   end
 
   config.include FactoryGirl::Syntax::Methods
+
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests
@@ -106,9 +107,12 @@ end
 
 shared_context 'omnikassa' do
   before do
+    store = create :store, url: 'test.host'
+    Spree::Store.stub(:current).and_return(store)
+
     reset_spree_preferences do |config|
-      config.site_url = 'test.host'
-      config.currency = "EUR"
+      config.currency = 'EUR'
+
       config.omnikassa_merchant_id = '1337'
       config.omnikassa_transaction_reference_prefix = 'PREFIX'
       config.omnikassa_key_version = '7'
