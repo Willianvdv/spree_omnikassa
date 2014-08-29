@@ -103,6 +103,8 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ControllerRequests
 
   config.fail_fast = ENV['FAIL_FAST'] || false
+
+  config.filter_run_excluding actual_ideal_payment: true unless ENV['TEST_IDEAL']
 end
 
 shared_context 'omnikassa' do

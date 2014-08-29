@@ -32,12 +32,12 @@ describe "Checkout", js: true do
       Spree::CheckoutController.any_instance.stub(:try_spree_current_user => user)
     end
 
-    it 'redirects to omnikassa' do
+    it 'redirects to omnikassa', actual_ideal_payment: true do
       goto_omnikassa
       expect(current_path).to match 'payment/selectpaymentmethod'
     end
 
-    it 'success after omnikassa' do
+    it 'success after omnikassa', actual_ideal_payment: true do
       goto_omnikassa
       do_omnikassa_ideal_payment
       expect(current_path).to eq('/success/1/')
