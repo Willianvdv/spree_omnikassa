@@ -1,12 +1,5 @@
 module Spree
   class PaymentMethod::Omnikassa < PaymentMethod
-    #attr_accessible :preferred_server,
-    #                :preferred_test_mode
-
-    # Show the confirm step (slightly hackish)
-    def payment_profiles_supported?
-      true
-    end
 
     def source_attributes
       true

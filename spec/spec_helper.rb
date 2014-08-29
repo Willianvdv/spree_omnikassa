@@ -119,6 +119,8 @@ shared_context 'omnikassa' do
       config.omnikassa_transaction_reference_prefix = 'PREFIX'
       config.omnikassa_key_version = '7'
       config.omnikassa_secret_key = 'SECRET'
+
+      config.always_include_confirm_step = true
     end
   end
 end
