@@ -1,5 +1,5 @@
 module Spree
-  class BillingIntegration::Omnikassa < BillingIntegration
+  class PaymentMethod::Omnikassa < PaymentMethod
     #attr_accessible :preferred_server,
     #                :preferred_test_mode
 

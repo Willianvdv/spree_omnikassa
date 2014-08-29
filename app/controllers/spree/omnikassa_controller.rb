@@ -18,7 +18,7 @@ module Spree
       # This will create a new payment. Maybe it would be easier to copy the
       # previous omnikassa payment
       payment = order.payments.create(amount: order.outstanding_balance)
-      payment.payment_method = Spree::BillingIntegration::Omnikassa.first
+      payment.payment_method = Spree::PaymentMethod::Omnikassa.first
       payment.save!
 
       redirect_to omnikassa_start_url(payment.id)

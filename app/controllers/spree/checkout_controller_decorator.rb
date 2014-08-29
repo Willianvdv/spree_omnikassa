@@ -19,6 +19,6 @@ Spree::CheckoutController.class_eval do
 
   def is_omnikassa_payment?
     payment_method = @order.payments.order(id: :desc).last.payment_method
-    payment_method.class == Spree::BillingIntegration::Omnikassa
+    payment_method.class == Spree::PaymentMethod::Omnikassa
   end
 end

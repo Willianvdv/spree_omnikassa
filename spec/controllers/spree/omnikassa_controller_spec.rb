@@ -11,7 +11,7 @@ describe Spree::OmnikassaController do
 
   before do
     controller.stub(:authorize!)
-    Spree::BillingIntegration::Omnikassa.create! name: 'omnikassa'
+    Spree::PaymentMethod::Omnikassa.create! name: 'omnikassa'
     Spree::Payment.stub(:find).and_return payment
     payment.stub(:order).and_return order
     order.stub(:guest_token).and_return(token)
@@ -36,7 +36,7 @@ describe Spree::OmnikassaController do
       end
 
       it 'has omnikassa as payment method' do
-        expect(restarted_payment.payment_method.class).to eq(Spree::BillingIntegration::Omnikassa)
+        expect(restarted_payment.payment_method.class).to eq(Spree::PaymentMethod::Omnikassa)
       end
 
       it 'has the order outstanding amount as payment amount' do
