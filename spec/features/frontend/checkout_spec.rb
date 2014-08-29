@@ -13,8 +13,10 @@ describe "Checkout", js: true do
       config.omnikassa_merchant_id = '002020000000001'
       config.omnikassa_secret_key = '002020000000001_KEY1'
       config.omnikassa_key_version = '1'
+
       random_prefix = (0...8).map { ('a'..'z').to_a[rand(26)] }.join
       config.omnikassa_transaction_reference_prefix = "SPROMNI#{random_prefix}"
+      config.always_include_confirm_step = true
     end
   end
 
@@ -51,6 +53,7 @@ def goto_omnikassa
   choose('Omnikassa')
   click_button "Save and Continue"
   click_button "Place"
+
   sleep 3 if Capybara.javascript_driver != :selenium # Wait for redirect
 end
 
