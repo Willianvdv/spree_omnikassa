@@ -3,6 +3,8 @@ module Spree
     #attr_accessible :preferred_server,
     #                :preferred_test_mode
 
+    def cancel(response_code); end 
+
     # Show the confirm step (slightly hackish)
     def payment_profiles_supported?
       true
