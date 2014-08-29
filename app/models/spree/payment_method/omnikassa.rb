@@ -1,5 +1,6 @@
 module Spree
   class PaymentMethod::Omnikassa < PaymentMethod
+    def cancel(response_code); end
 
     def source_attributes
       true
