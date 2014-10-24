@@ -7,7 +7,7 @@ module Spree
       # todo: find out if there a more elegant way to create a payment
 
       order = Spree::Order.find(params[:order_id])
-      authorize! :read, order, params[:token]
+      authorize! :read, order, session[:access_token] || params[:token]
 
       payment = order.payments.create(amount: order.outstanding_balance)
       payment.payment_method = Spree::BillingIntegration::Omnikassa.first
@@ -148,7 +148,7 @@ module Spree
 
       def payment
         pm = Spree::Payment.find(params[:payment_id])
-        authorize! :read, pm.order, params[:token]
+        authorize! :read, pm.order, session[:access_token] || params[:token]
         pm
       end
 
