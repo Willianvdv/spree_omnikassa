@@ -22,6 +22,7 @@ module Spree
       { amount: amount,
         currencyCode: currency_code,
         merchantId: merchant_id,
+        orderId: order_id,
         normalReturnUrl: normal_return_url,
         automaticResponseUrl: automatic_response_url,
         transactionReference: transaction_reference,
@@ -75,6 +76,10 @@ module Spree
 
     def self.secret
       Spree::Config[:omnikassa_secret_key]
+    end
+
+    def order_id
+      @payment.order.number
     end
   end
 end
