@@ -118,7 +118,8 @@ module Spree
           :normalReturnUrl => normal_return_url,
           :automaticResponseUrl => automatic_response_url,
           :transactionReference => transaction_reference,
-          :keyVersion => key_version, }
+          :keyVersion => key_version,
+          :customerLanguage => customer_language, }
       end
 
       def normal_return_url
@@ -139,6 +140,10 @@ module Spree
 
       def key_version
         Spree::Config[:omnikassa_key_version]
+      end
+    
+      def customer_language
+        Spree::Config[:omnikassa_customer_language]
       end
 
       # SCCS
