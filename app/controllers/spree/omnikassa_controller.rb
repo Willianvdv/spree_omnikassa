@@ -39,6 +39,7 @@ module Spree
           :omnikassa_transaction_reference => data[:transactionReference],
           :omnikassa_authorisation_id => data[:authorisationId],
           :omnikassa_key_version => data[:keyVersion],
+          :omnikassa_customer_language => data[:customerLanguage],
           :omnikassa_payment_mean_brand => data[:paymentMeanBrand],
           :omnikassa_payment_mean_type => data[:paymentMeanType],
           :omnikassa_response_code => data[:responseCode],
@@ -118,7 +119,8 @@ module Spree
           :normalReturnUrl => normal_return_url,
           :automaticResponseUrl => automatic_response_url,
           :transactionReference => transaction_reference,
-          :keyVersion => key_version, }
+          :keyVersion => key_version,
+          :customerLanguage => customer_language, }
       end
 
       def normal_return_url
@@ -139,6 +141,10 @@ module Spree
 
       def key_version
         Spree::Config[:omnikassa_key_version]
+      end
+
+      def customer_language
+        Spree::Config[:omnikassa_customer_language]
       end
 
       # SCCS

@@ -6,6 +6,7 @@ module Spree
         @preferences_omnikassa = [:omnikassa_merchant_id,
                                   :omnikassa_secret_key,
                                   :omnikassa_key_version,
+                                  :omnikassa_customer_language,
                                   :omnikassa_transaction_reference_prefix,
                                   :omnikassa_url]
 
