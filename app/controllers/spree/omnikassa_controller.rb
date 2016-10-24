@@ -142,6 +142,10 @@ module Spree
       def key_version
         Spree::Config[:omnikassa_key_version]
       end
+    
+      def customer_language
+        Spree::Config[:omnikassa_customer_language]
+      end
 
       def customer_language
         Spree::Config[:omnikassa_customer_language]
